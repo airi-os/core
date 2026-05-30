@@ -10,6 +10,10 @@ if [ ! -x "$SYSTEM_ELECTRON_BIN" ]; then
   exit 1
 fi
 
+# Find the npm-installed electron package to source type declarations from.
+# pnpm stores it under node_modules/.pnpm/electron@<version>/node_modules/electron.
+NPM_ELECTRON_DIR="$(find node_modules/.pnpm -path '*/node_modules/electron' -type d 2>/dev/null | head -1)"
+
 for MODULE_DIR in "node_modules/electron" "apps/stage-tamagotchi/node_modules/electron"; do
   mkdir -p "$MODULE_DIR/dist"
 
@@ -28,12 +32,23 @@ exec /usr/lib/electron42/electron "$@"
 WRAPPER
   chmod +x "$MODULE_DIR/dist/electron"
 
+  # Copy TypeScript declarations and entry point from the npm package
+  # so that TypeScript can resolve electron types correctly.
+  if [ -n "$NPM_ELECTRON_DIR" ] && [ -f "$NPM_ELECTRON_DIR/electron.d.ts" ]; then
+    cp -f "$NPM_ELECTRON_DIR/electron.d.ts" "$MODULE_DIR/electron.d.ts"
+    cp -f "$NPM_ELECTRON_DIR/index.js" "$MODULE_DIR/index.js"
+    echo "[symlink-electron] Copied type declarations from $NPM_ELECTRON_DIR"
+  else
+    echo "[symlink-electron] WARNING: Could not find npm electron package for type declarations"
+  fi
+
   # Create package.json
   cat > "$MODULE_DIR/package.json" << 'PKGJSON'
 {
   "name": "electron",
   "version": "42.3.0",
-  "main": "dist/electron"
+  "main": "dist/electron",
+  "types": "electron.d.ts"
 }
 PKGJSON
 
