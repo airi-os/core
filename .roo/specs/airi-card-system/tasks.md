@@ -113,8 +113,8 @@
 
 ## Phase 9: i18n
 
-- [ ] **T9.1**: Add all new i18n keys to [`packages/i18n/src/locales/en/settings.yaml`](packages/i18n/src/locales/en/settings.yaml) under `pages.card` and `pages.modules` namespaces
-- [ ] **T9.2**: Add fallback English keys to all other locale files (zh-Hans, zh-Hant, ja, ko, ru, es, fr, vi)
+- [x] **T9.1**: Add all new i18n keys to [`packages/i18n/src/locales/en/settings.yaml`](packages/i18n/src/locales/en/settings.yaml) under `pages.card` and `pages.modules` namespaces
+- [x] **T9.2**: Add fallback English keys to all other locale files (zh-Hans, zh-Hant, ja, ko, ru, es, fr, vi)
 
 ## Phase 10: Electron IPC Integration
 
