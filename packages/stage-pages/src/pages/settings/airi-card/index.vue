@@ -23,6 +23,19 @@ import CardImportWizard from './components/CardImportWizard.vue'
 import CardListItem from './components/CardListItem.vue'
 import DeleteCardDialog from './components/DeleteCardDialog.vue'
 
+import {
+  base64ToUtf8,
+  buildCharaCardV2,
+  concatUint8Arrays,
+  crc32,
+  createCrc32Table,
+  createPngTextChunk,
+  injectPngTextChunk,
+  loadImageElement,
+  parsePngCharaPayload,
+  utf8ToBase64,
+} from './utils'
+
 const { t } = useI18n()
 const cardStore = useAiriCardStore()
 const displayModelsStore = useDisplayModelsStore()
@@ -179,48 +192,6 @@ const CARD_EXPORT_FRAME = {
   innerWidth: 831,
   innerHeight: 1295,
 } as const
-
-// T3.1: base64ToUtf8 — decode base64 to UTF-8 string
-function base64ToUtf8(input: string) {
-  return decodeURIComponent(escape(atob(input)))
-}
-
-// T3.2: utf8ToBase64 — encode UTF-8 string to base64
-function utf8ToBase64(input: string) {
-  return btoa(unescape(encodeURIComponent(input)))
-}
-
-// T3.3: parsePngCharaPayload — extract chara text chunk from PNG ArrayBuffer
-function parsePngCharaPayload(buffer: ArrayBuffer): ImportedCardPayload {
-  const bytes = new Uint8Array(buffer)
-
-  for (let offset = 8; offset < bytes.length - 8; ) {
-    const length =
-      ((bytes[offset] << 24) | (bytes[offset + 1] << 16) | (bytes[offset + 2] << 8) | bytes[offset + 3]) >>> 0
-
-    const type = String.fromCharCode(bytes[offset + 4], bytes[offset + 5], bytes[offset + 6], bytes[offset + 7])
-
-    if (type === 'tEXt') {
-      const dataStart = offset + 8
-      const dataEnd = dataStart + length
-      const data = bytes.slice(dataStart, dataEnd)
-      const separator = data.indexOf(0)
-
-      if (separator > 0) {
-        const keyword = new TextDecoder().decode(data.slice(0, separator))
-        if (keyword === 'chara') {
-          const text = new TextDecoder().decode(data.slice(separator + 1))
-          const decoded = JSON.parse(base64ToUtf8(text)) as any
-          return decoded as ImportedCardPayload
-        }
-      }
-    }
-
-    offset += 12 + length
-  }
-
-  throw new Error('PNG does not contain a supported chara payload')
-}
 
 // T3.4: parseImportedCard — parse JSON string as Card type
 function parseImportedCard(content: string): ImportedCardPayload {
@@ -476,47 +447,6 @@ async function exportCard(cardId: string) {
   URL.revokeObjectURL(url)
 }
 
-// T3.10: chara_card_v2 builder
-function buildCharaCardV2(card: AiriCard) {
-  const exportedExtensions = {
-    ...card.extensions,
-    airi: {
-      ...card.extensions?.airi,
-      sillytavernCompatibilityProbe: {
-        exportedBy: 'Project AIRI',
-        probe: 'extensions-airi-ok',
-        version: 1,
-      },
-    },
-  }
-
-  return {
-    spec: 'chara_card_v2',
-    spec_version: '2.0',
-    data: {
-      name: card.name || '',
-      description: card.description || '',
-      personality: card.personality || '',
-      scenario: card.scenario || '',
-      first_mes: card.greetings?.[0] || '',
-      mes_example: Array.isArray(card.messageExample)
-        ? card.messageExample
-            .map((example) => (Array.isArray(example) ? example.join('\n') : String(example)))
-            .join('\n<START>\n')
-        : '',
-      creator_notes: card.notes || '',
-      system_prompt: card.systemPrompt || '',
-      post_history_instructions: card.postHistoryInstructions || '',
-      alternate_greetings: card.greetings?.slice(1) || [],
-      tags: card.tags || [],
-      creator: card.creator || '',
-      character_version: card.version || '',
-      extensions: exportedExtensions,
-      x_airi_probe: 'top-level-data-ok',
-    },
-  }
-}
-
 // T3.11: Background embedding for export
 async function getCardWithExportedBackground(cardId: string): Promise<AiriCard | undefined> {
   const card = cardStore.getCard(cardId)
@@ -552,90 +482,6 @@ async function getCardWithExportedBackground(cardId: string): Promise<AiriCard |
     }
     reader.onerror = () => resolve(card)
     reader.readAsDataURL(exportBackground.blob)
-  })
-}
-
-// T3.12: PNG chunk utilities — CRC32 table
-function createCrc32Table() {
-  const table = new Uint32Array(256)
-  for (let i = 0; i < 256; i += 1) {
-    let c = i
-    for (let j = 0; j < 8; j += 1) {
-      c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1
-    }
-    table[i] = c >>> 0
-  }
-  return table
-}
-
-const crc32Table = createCrc32Table()
-
-function crc32(data: Uint8Array) {
-  let crc = 0xffffffff
-  for (let i = 0; i < data.length; i += 1) {
-    crc = crc32Table[(crc ^ data[i]) & 0xff] ^ (crc >>> 8)
-  }
-  return (crc ^ 0xffffffff) >>> 0
-}
-
-function concatUint8Arrays(parts: Uint8Array[]) {
-  const total = parts.reduce((sum, part) => sum + part.length, 0)
-  const output = new Uint8Array(total)
-  let offset = 0
-  for (const part of parts) {
-    output.set(part, offset)
-    offset += part.length
-  }
-  return output
-}
-
-function uint32ToBytes(value: number) {
-  return new Uint8Array([(value >>> 24) & 0xff, (value >>> 16) & 0xff, (value >>> 8) & 0xff, value & 0xff])
-}
-
-function createPngTextChunk(keyword: string, text: string) {
-  const typeBytes = new TextEncoder().encode('tEXt')
-  const dataBytes = new TextEncoder().encode(`${keyword}\0${text}`)
-  const crcBytes = uint32ToBytes(crc32(concatUint8Arrays([typeBytes, dataBytes])))
-
-  return concatUint8Arrays([uint32ToBytes(dataBytes.length), typeBytes, dataBytes, crcBytes])
-}
-
-function injectPngTextChunk(pngBytes: Uint8Array, keyword: string, text: string) {
-  const iendOffset = pngBytes.lastIndexOf(73) // 'I'
-  if (iendOffset < 12) throw new Error('Invalid PNG payload')
-
-  let insertOffset = -1
-  for (let offset = 8; offset < pngBytes.length - 8; ) {
-    const length =
-      ((pngBytes[offset] << 24) | (pngBytes[offset + 1] << 16) | (pngBytes[offset + 2] << 8) | pngBytes[offset + 3]) >>>
-      0
-    const type = String.fromCharCode(
-      pngBytes[offset + 4],
-      pngBytes[offset + 5],
-      pngBytes[offset + 6],
-      pngBytes[offset + 7],
-    )
-    if (type === 'IEND') {
-      insertOffset = offset
-      break
-    }
-    offset += 12 + length
-  }
-
-  if (insertOffset === -1) throw new Error('PNG is missing IEND chunk')
-
-  const chunk = createPngTextChunk(keyword, text)
-  return concatUint8Arrays([pngBytes.slice(0, insertOffset), chunk, pngBytes.slice(insertOffset)])
-}
-
-// T3.13: loadImageElement — load image from src, return HTMLImageElement
-function loadImageElement(src: string) {
-  return new Promise<HTMLImageElement>((resolve, reject) => {
-    const image = new Image()
-    image.onload = () => resolve(image)
-    image.onerror = () => reject(new Error(`Failed to load image: ${src}`))
-    image.src = src
   })
 }
 

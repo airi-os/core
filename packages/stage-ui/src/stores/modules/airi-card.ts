@@ -216,22 +216,343 @@ export interface AiriCard extends Card {
   } & Card['extensions']
 }
 
+/**
+ * Serializer for Map<string, AiriCard> to/from localStorage.
+ * Converts the Map to/from a JSON-serializable array of entries.
+ */
+export const mapEntriesSerializer = {
+  read: (v: string) => {
+    const data = JSON.parse(v)
+    return new Map(data) as Map<string, AiriCard>
+  },
+  write: (v: Map<string, AiriCard>) => JSON.stringify(Array.from(v.entries())),
+}
+
+/**
+ * Strips embedded background data URL from the extension before storage.
+ * Embedded backgrounds are imported via addBackground and referenced by ID.
+ */
+export function stripEmbeddedBackgroundData(extension: AiriExtension): AiriExtension {
+  const modulesCopy: any = { ...extension.modules }
+  delete modulesCopy.preferredBackgroundDataUrl
+  delete modulesCopy.preferredBackgroundName
+
+  return {
+    ...extension,
+    modules: modulesCopy,
+  }
+}
+
+/**
+ * Resolves the AiriExtension for a card, providing defaults for all fields.
+ *
+ * Handles migration of legacy fields:
+ * - modules.artistry -> top-level artistry
+ * - selectedModelId -> displayModelId
+ * - preferredBackgroundId -> activeBackgroundId
+ *
+ * @param card - The card to resolve extension for
+ * @param options - Optional store values used for defaults
+ */
+export function resolveAiriExtension(
+  card: Card | ccv3.CharacterCardV3,
+  options: {
+    stageModelSelected?: string
+    activeConsciousnessProvider?: string
+    activeConsciousnessModel?: string
+  } = {},
+): AiriExtension {
+  const {
+    stageModelSelected = 'default',
+    activeConsciousnessProvider: provider = '',
+    activeConsciousnessModel: model = '',
+  } = options
+
+  const existingExtension = ('data' in card ? card.data?.extensions?.airi : card.extensions?.airi) as AiriExtension
+
+  const defaultModules = {
+    consciousness: {
+      provider: '',
+      model: '',
+    },
+    speech: {
+      provider: '',
+      model: '',
+      voice_id: '',
+    },
+    displayModelId: stageModelSelected,
+    activeBackgroundId: 'none',
+  }
+
+  const defaultHeartbeats: HeartbeatConfig = {
+    enabled: false,
+    intervalMinutes: 5,
+    prompt: '',
+    injectIntoPrompt: true,
+    useAsLocalGate: true,
+    contextOptions: {
+      windowHistory: true,
+      systemLoad: true,
+      usageMetrics: true,
+    },
+    schedule: {
+      start: '09:00',
+      end: '22:00',
+    },
+    respectSchedule: true,
+  }
+
+  const defaultDreamState: DreamStateConfig = {
+    enabled: false,
+    strictAfkGating: true,
+    journalingThreshold: 'balanced',
+    maxSessionsPerDay: 4,
+    sessionTimeoutMinutes: 60,
+    afkThresholdMinutes: 5,
+    minConversationTurns: 4,
+    lastProcessedAt: undefined,
+    dailyRunDate: undefined,
+    dailyRunCount: 0,
+  }
+
+  const defaultShortTermMemory: ShortTermMemoryConfig = {
+    windowSize: 3,
+    tokenBudgetPerDay: 1000,
+  }
+
+  const defaultArtistry: AiriExtension['artistry'] = {
+    widgetInstruction: DEFAULT_ARTISTRY_WIDGET_SPAWNING_PROMPT,
+    spawnMode: 'bg_widget',
+    autonomousEnabled: false,
+    autonomousMonitorEnabled: true,
+    autonomousHistoryDepth: 3,
+  }
+
+  const defaultGeneration: CharacterGenerationConfig = {
+    enabled: false,
+    provider,
+    model,
+    known: {
+      contextWidth: undefined,
+      reasoningFallback: true,
+    },
+    advanced: undefined,
+    compaction: {
+      strategy: 'none',
+      minKeepTurns: 15,
+    },
+    importedPresetMeta: undefined,
+  }
+
+  const defaultActing: ActingConfig = {
+    modelExpressionPrompt: '',
+    speechExpressionPrompt: '',
+    speechMannerismPrompt: '',
+    idleAnimations: [],
+  }
+
+  // Return default if no extension exists
+  if (!existingExtension) {
+    return {
+      modules: defaultModules,
+      acting: defaultActing,
+      agents: {},
+      heartbeats: defaultHeartbeats,
+      dreamState: defaultDreamState,
+      shortTermMemory: defaultShortTermMemory,
+      artistry: defaultArtistry,
+      generation: defaultGeneration,
+      groundingEnabled: false,
+      visual_assets: {},
+      active_concepts: [],
+      eternal_record: { relational_milestones: [], lore_bits: [] },
+      imageJournal: { selfie: false },
+      proactivity_metrics: {
+        ttsCount: 0,
+        sttCount: 0,
+        chatCount: 0,
+        totalTurns: 0,
+      },
+    }
+  }
+
+  // Merge existing extension with defaults
+  const resolvedDisplayModelId =
+    existingExtension.modules?.displayModelId ??
+    existingExtension.modules?.selectedModelId ??
+    defaultModules.displayModelId
+
+  // Resolve legacy preferredBackgroundId to new activeBackgroundId
+  const existingModulesAny = existingExtension.modules as Record<string, any> | undefined
+  const resolvedActiveBackgroundId =
+    existingModulesAny?.activeBackgroundId ??
+    existingModulesAny?.preferredBackgroundId ??
+    defaultModules.activeBackgroundId
+
+  return {
+    ...existingExtension,
+    modules: {
+      ...existingExtension?.modules,
+      consciousness: {
+        ...existingExtension?.modules?.consciousness,
+        provider: existingExtension?.modules?.consciousness?.provider || defaultModules.consciousness.provider,
+        model: existingExtension?.modules?.consciousness?.model || defaultModules.consciousness.model,
+      },
+      speech: {
+        ...existingExtension?.modules?.speech,
+        provider: existingExtension?.modules?.speech?.provider || defaultModules.speech.provider,
+        model: existingExtension?.modules?.speech?.model || defaultModules.speech.model,
+        voice_id: existingExtension?.modules?.speech?.voice_id || defaultModules.speech.voice_id,
+        pitch: existingExtension?.modules?.speech?.pitch,
+        rate: existingExtension?.modules?.speech?.rate,
+        ssml: existingExtension?.modules?.speech?.ssml,
+        language: existingExtension?.modules?.speech?.language,
+      },
+      vrm: existingExtension?.modules?.vrm,
+      live2d: existingExtension?.modules?.live2d,
+      displayModelId: resolvedDisplayModelId,
+      activeBackgroundId: resolvedActiveBackgroundId,
+    },
+    active_state: (() => {
+      const activeConcepts = (existingExtension as any)?.active_concepts || []
+      const visualAssets = (existingExtension as any)?.visual_assets || {}
+      const autonomousEnabled = existingExtension?.artistry?.autonomousEnabled ?? false
+
+      let foldedModelId = resolvedDisplayModelId
+      let foldedBackgroundId = resolvedActiveBackgroundId
+      const foldedExpressions: Record<string, number> = {}
+
+      // Iterate bottom-to-top: last override wins
+      for (const conceptId of activeConcepts) {
+        const concept = visualAssets[conceptId]
+        if (!concept) continue
+
+        if (concept.manifestation?.modelId && concept.manifestation.modelId !== 'inherit') {
+          foldedModelId = concept.manifestation.modelId
+        }
+
+        if (
+          !autonomousEnabled &&
+          concept.manifestation?.backgroundId &&
+          concept.manifestation.backgroundId !== 'inherit'
+        ) {
+          foldedBackgroundId = concept.manifestation.backgroundId
+        }
+
+        if ((concept as any).manifestation?.expressions) {
+          Object.assign(foldedExpressions, (concept as any).manifestation.expressions)
+        }
+      }
+
+      return {
+        displayModelId: foldedModelId,
+        activeBackgroundId: foldedBackgroundId,
+        active_expressions: foldedExpressions,
+      }
+    })(),
+    artistry: {
+      ...existingExtension?.artistry,
+      widgetInstruction: existingExtension?.artistry?.widgetInstruction ?? defaultArtistry.widgetInstruction,
+      spawnMode: existingExtension?.artistry?.spawnMode ?? 'bg_widget',
+      autonomousEnabled: existingExtension?.artistry?.autonomousEnabled ?? false,
+      autonomousThreshold: existingExtension?.artistry?.autonomousThreshold ?? 70,
+      autonomousTarget: existingExtension?.artistry?.autonomousTarget ?? 'user',
+      autonomousMonitorEnabled: existingExtension?.artistry?.autonomousMonitorEnabled ?? true,
+      autonomousHistoryDepth: existingExtension?.artistry?.autonomousHistoryDepth ?? 3,
+    },
+    generation: {
+      ...existingExtension?.generation,
+      enabled: existingExtension?.generation?.enabled ?? defaultGeneration.enabled,
+      provider: existingExtension?.generation?.provider ?? defaultGeneration.provider,
+      model: existingExtension?.generation?.model ?? defaultGeneration.model,
+      known: {
+        ...existingExtension?.generation?.known,
+        maxTokens: existingExtension?.generation?.known?.maxTokens,
+        temperature: existingExtension?.generation?.known?.temperature,
+        topP: existingExtension?.generation?.known?.topP,
+        contextWidth: existingExtension?.generation?.known?.contextWidth ?? defaultGeneration.known?.contextWidth,
+        reasoningFallback:
+          existingExtension?.generation?.known?.reasoningFallback ?? defaultGeneration.known?.reasoningFallback,
+      },
+      advanced: existingExtension?.generation?.advanced,
+      compaction: {
+        strategy: existingExtension?.generation?.compaction?.strategy ?? 'none',
+        minKeepTurns: existingExtension?.generation?.compaction?.minKeepTurns ?? 15,
+      },
+      importedPresetMeta: existingExtension?.generation?.importedPresetMeta,
+    },
+    acting: {
+      ...existingExtension?.acting,
+      modelExpressionPrompt: existingExtension?.acting?.modelExpressionPrompt ?? defaultActing.modelExpressionPrompt,
+      speechExpressionPrompt: existingExtension?.acting?.speechExpressionPrompt ?? defaultActing.speechExpressionPrompt,
+      speechMannerismPrompt: existingExtension?.acting?.speechMannerismPrompt ?? defaultActing.speechMannerismPrompt,
+      idleAnimations: existingExtension?.acting?.idleAnimations ?? defaultActing.idleAnimations,
+    },
+    outfits: existingExtension?.outfits ?? [],
+    agents: existingExtension?.agents ?? {},
+    heartbeats: {
+      ...existingExtension?.heartbeats,
+      enabled: existingExtension?.heartbeats?.enabled ?? defaultHeartbeats.enabled,
+      intervalMinutes: existingExtension?.heartbeats?.intervalMinutes ?? defaultHeartbeats.intervalMinutes,
+      prompt: existingExtension?.heartbeats?.prompt ?? defaultHeartbeats.prompt,
+      injectIntoPrompt: existingExtension?.heartbeats?.injectIntoPrompt ?? defaultHeartbeats.injectIntoPrompt,
+      useAsLocalGate: existingExtension?.heartbeats?.useAsLocalGate ?? defaultHeartbeats.useAsLocalGate,
+      contextOptions: {
+        ...existingExtension?.heartbeats?.contextOptions,
+        windowHistory:
+          existingExtension?.heartbeats?.contextOptions?.windowHistory ??
+          defaultHeartbeats.contextOptions!.windowHistory,
+        systemLoad:
+          existingExtension?.heartbeats?.contextOptions?.systemLoad ?? defaultHeartbeats.contextOptions!.systemLoad,
+        usageMetrics:
+          existingExtension?.heartbeats?.contextOptions?.usageMetrics ?? defaultHeartbeats.contextOptions!.usageMetrics,
+      },
+      schedule: {
+        ...existingExtension?.heartbeats?.schedule,
+        start: existingExtension?.heartbeats?.schedule?.start ?? defaultHeartbeats.schedule.start,
+        end: existingExtension?.heartbeats?.schedule?.end ?? defaultHeartbeats.schedule.end,
+      },
+      respectSchedule: existingExtension?.heartbeats?.respectSchedule ?? defaultHeartbeats.respectSchedule,
+    },
+    dreamState: {
+      ...existingExtension?.dreamState,
+      enabled: existingExtension?.dreamState?.enabled ?? defaultDreamState.enabled,
+      strictAfkGating: existingExtension?.dreamState?.strictAfkGating ?? defaultDreamState.strictAfkGating,
+      journalingThreshold: existingExtension?.dreamState?.journalingThreshold ?? defaultDreamState.journalingThreshold,
+      maxSessionsPerDay: existingExtension?.dreamState?.maxSessionsPerDay ?? defaultDreamState.maxSessionsPerDay,
+      sessionTimeoutMinutes:
+        existingExtension?.dreamState?.sessionTimeoutMinutes ?? defaultDreamState.sessionTimeoutMinutes,
+      afkThresholdMinutes: existingExtension?.dreamState?.afkThresholdMinutes ?? defaultDreamState.afkThresholdMinutes,
+      minConversationTurns:
+        existingExtension?.dreamState?.minConversationTurns ?? defaultDreamState.minConversationTurns,
+      lastProcessedAt: existingExtension?.dreamState?.lastProcessedAt ?? defaultDreamState.lastProcessedAt,
+      dailyRunDate: existingExtension?.dreamState?.dailyRunDate ?? defaultDreamState.dailyRunDate,
+      dailyRunCount: existingExtension?.dreamState?.dailyRunCount ?? defaultDreamState.dailyRunCount,
+    },
+    shortTermMemory: {
+      windowSize: existingExtension?.shortTermMemory?.windowSize ?? defaultShortTermMemory.windowSize,
+      tokenBudgetPerDay:
+        existingExtension?.shortTermMemory?.tokenBudgetPerDay ?? defaultShortTermMemory.tokenBudgetPerDay,
+    },
+    proactivity_metrics: {
+      ...existingExtension?.proactivity_metrics,
+      ttsCount: existingExtension?.proactivity_metrics?.ttsCount ?? 0,
+      sttCount: existingExtension?.proactivity_metrics?.sttCount ?? 0,
+      chatCount: existingExtension?.proactivity_metrics?.chatCount ?? 0,
+      totalTurns: existingExtension?.proactivity_metrics?.totalTurns ?? 0,
+    },
+    visual_assets: (existingExtension as any)?.visual_assets || {},
+    eternal_record: (existingExtension as any)?.eternal_record || { relational_milestones: [], lore_bits: [] },
+    active_concepts: (existingExtension as any)?.active_concepts ?? [],
+    groundingEnabled: existingExtension?.groundingEnabled ?? false,
+    imageJournal: (existingExtension as any)?.imageJournal || { selfie: false },
+  }
+}
+
 export const useAiriCardStore = defineStore('airi-card', () => {
   const { t } = useI18n()
   const defaultSystemPrompt = t('settings.pages.card.creation.defaults.systemprompt')
   const defaultPostHistoryInstructions = t('settings.pages.card.creation.defaults.posthistoryinstructions')
-
-  /**
-   * Serializer for Map<string, AiriCard> to/from localStorage.
-   * Converts the Map to/from a JSON-serializable array of entries.
-   */
-  const mapEntriesSerializer = {
-    read: (v: string) => {
-      const data = JSON.parse(v)
-      return new Map(data) as Map<string, AiriCard>
-    },
-    write: (v: Map<string, AiriCard>) => JSON.stringify(Array.from(v.entries())),
-  }
 
   const cards = useLocalStorageManualReset<Map<string, AiriCard>>('airi-cards', new Map(), {
     serializer: mapEntriesSerializer,
@@ -252,21 +573,6 @@ export const useAiriCardStore = defineStore('airi-card', () => {
     storeToRefs(consciousnessStore)
 
   const { activeSpeechProvider, activeSpeechVoiceId, activeSpeechModel } = storeToRefs(speechStore)
-
-  /**
-   * Strips embedded background data URL from the extension before storage.
-   * Embedded backgrounds are imported via addBackground and referenced by ID.
-   */
-  function stripEmbeddedBackgroundData(extension: AiriExtension): AiriExtension {
-    const modulesCopy: any = { ...extension.modules }
-    delete modulesCopy.preferredBackgroundDataUrl
-    delete modulesCopy.preferredBackgroundName
-
-    return {
-      ...extension,
-      modules: modulesCopy,
-    }
-  }
 
   /**
    * Compacts a card by re-normalizing it through newAiriCard.
@@ -476,286 +782,6 @@ export const useAiriCardStore = defineStore('airi-card', () => {
   }
 
   /**
-   * Resolves the AiriExtension for a card, providing defaults for all fields.
-   *
-   * Handles migration of legacy fields:
-   * - modules.artistry -> top-level artistry
-   * - selectedModelId -> displayModelId
-   * - preferredBackgroundId -> activeBackgroundId
-   */
-  function resolveAiriExtension(card: Card | ccv3.CharacterCardV3): AiriExtension {
-    const existingExtension = ('data' in card ? card.data?.extensions?.airi : card.extensions?.airi) as AiriExtension
-
-    const defaultModules = {
-      consciousness: {
-        provider: '',
-        model: '',
-      },
-      speech: {
-        provider: '',
-        model: '',
-        voice_id: '',
-      },
-      displayModelId: stageModelStore.stageModelSelected,
-      activeBackgroundId: 'none',
-    }
-
-    const defaultHeartbeats: HeartbeatConfig = {
-      enabled: false,
-      intervalMinutes: 5,
-      prompt: '',
-      injectIntoPrompt: true,
-      useAsLocalGate: true,
-      contextOptions: {
-        windowHistory: true,
-        systemLoad: true,
-        usageMetrics: true,
-      },
-      schedule: {
-        start: '09:00',
-        end: '22:00',
-      },
-      respectSchedule: true,
-    }
-
-    const defaultDreamState: DreamStateConfig = {
-      enabled: false,
-      strictAfkGating: true,
-      journalingThreshold: 'balanced',
-      maxSessionsPerDay: 4,
-      sessionTimeoutMinutes: 60,
-      afkThresholdMinutes: 5,
-      minConversationTurns: 4,
-      lastProcessedAt: undefined,
-      dailyRunDate: undefined,
-      dailyRunCount: 0,
-    }
-
-    const defaultShortTermMemory: ShortTermMemoryConfig = {
-      windowSize: 3,
-      tokenBudgetPerDay: 1000,
-    }
-
-    const defaultArtistry = {
-      widgetInstruction: DEFAULT_ARTISTRY_WIDGET_SPAWNING_PROMPT,
-    }
-
-    const defaultGeneration: CharacterGenerationConfig = {
-      enabled: false,
-      provider: activeConsciousnessProvider.value,
-      model: activeConsciousnessModel.value,
-      known: {
-        contextWidth: undefined,
-        reasoningFallback: true,
-      },
-      advanced: undefined,
-      importedPresetMeta: undefined,
-    }
-
-    const defaultActing: ActingConfig = {
-      modelExpressionPrompt: '',
-      speechExpressionPrompt: '',
-      speechMannerismPrompt: '',
-      idleAnimations: [],
-    }
-
-    // Return default if no extension exists
-    if (!existingExtension) {
-      return {
-        modules: defaultModules,
-        acting: defaultActing,
-        agents: {},
-        heartbeats: defaultHeartbeats,
-        dreamState: defaultDreamState,
-        shortTermMemory: defaultShortTermMemory,
-        artistry: defaultArtistry,
-        generation: defaultGeneration,
-        groundingEnabled: false,
-        visual_assets: {},
-        active_concepts: [],
-        eternal_record: { relational_milestones: [], lore_bits: [] },
-        imageJournal: { selfie: false },
-      }
-    }
-
-    // Merge existing extension with defaults
-    const resolvedDisplayModelId =
-      existingExtension.modules?.displayModelId ??
-      existingExtension.modules?.selectedModelId ??
-      defaultModules.displayModelId
-
-    // Resolve legacy preferredBackgroundId to new activeBackgroundId
-    const existingModulesAny = existingExtension.modules as Record<string, any> | undefined
-    const resolvedActiveBackgroundId =
-      existingModulesAny?.activeBackgroundId ??
-      existingModulesAny?.preferredBackgroundId ??
-      defaultModules.activeBackgroundId
-
-    return {
-      ...existingExtension,
-      modules: {
-        ...existingExtension?.modules,
-        consciousness: {
-          ...existingExtension?.modules?.consciousness,
-          provider: existingExtension?.modules?.consciousness?.provider || defaultModules.consciousness.provider,
-          model: existingExtension?.modules?.consciousness?.model || defaultModules.consciousness.model,
-        },
-        speech: {
-          ...existingExtension?.modules?.speech,
-          provider: existingExtension?.modules?.speech?.provider || defaultModules.speech.provider,
-          model: existingExtension?.modules?.speech?.model || defaultModules.speech.model,
-          voice_id: existingExtension?.modules?.speech?.voice_id || defaultModules.speech.voice_id,
-          pitch: existingExtension?.modules?.speech?.pitch,
-          rate: existingExtension?.modules?.speech?.rate,
-          ssml: existingExtension?.modules?.speech?.ssml,
-          language: existingExtension?.modules?.speech?.language,
-        },
-        vrm: existingExtension?.modules?.vrm,
-        live2d: existingExtension?.modules?.live2d,
-        displayModelId: resolvedDisplayModelId,
-        activeBackgroundId: resolvedActiveBackgroundId,
-      },
-      active_state: (() => {
-        const activeConcepts = (existingExtension as any)?.active_concepts || []
-        const visualAssets = (existingExtension as any)?.visual_assets || {}
-        const autonomousEnabled = existingExtension?.artistry?.autonomousEnabled ?? false
-
-        let foldedModelId = resolvedDisplayModelId
-        let foldedBackgroundId = resolvedActiveBackgroundId
-        const foldedExpressions: Record<string, number> = {}
-
-        // Iterate bottom-to-top: last override wins
-        for (const conceptId of activeConcepts) {
-          const concept = visualAssets[conceptId]
-          if (!concept) continue
-
-          if (concept.manifestation?.modelId && concept.manifestation.modelId !== 'inherit') {
-            foldedModelId = concept.manifestation.modelId
-          }
-
-          if (
-            !autonomousEnabled &&
-            concept.manifestation?.backgroundId &&
-            concept.manifestation.backgroundId !== 'inherit'
-          ) {
-            foldedBackgroundId = concept.manifestation.backgroundId
-          }
-
-          if ((concept as any).manifestation?.expressions) {
-            Object.assign(foldedExpressions, (concept as any).manifestation.expressions)
-          }
-        }
-
-        return {
-          displayModelId: foldedModelId,
-          activeBackgroundId: foldedBackgroundId,
-          active_expressions: foldedExpressions,
-        }
-      })(),
-      artistry: {
-        ...existingExtension?.artistry,
-        widgetInstruction: existingExtension?.artistry?.widgetInstruction ?? defaultArtistry.widgetInstruction,
-        spawnMode: existingExtension?.artistry?.spawnMode ?? 'bg_widget',
-        autonomousEnabled: existingExtension?.artistry?.autonomousEnabled ?? false,
-        autonomousThreshold: existingExtension?.artistry?.autonomousThreshold ?? 70,
-        autonomousTarget: existingExtension?.artistry?.autonomousTarget ?? 'user',
-        autonomousMonitorEnabled: existingExtension?.artistry?.autonomousMonitorEnabled ?? true,
-        autonomousHistoryDepth: existingExtension?.artistry?.autonomousHistoryDepth ?? 3,
-      },
-      generation: {
-        ...existingExtension?.generation,
-        enabled: existingExtension?.generation?.enabled ?? defaultGeneration.enabled,
-        provider: existingExtension?.generation?.provider ?? defaultGeneration.provider,
-        model: existingExtension?.generation?.model ?? defaultGeneration.model,
-        known: {
-          ...existingExtension?.generation?.known,
-          maxTokens: existingExtension?.generation?.known?.maxTokens,
-          temperature: existingExtension?.generation?.known?.temperature,
-          topP: existingExtension?.generation?.known?.topP,
-          contextWidth: existingExtension?.generation?.known?.contextWidth ?? defaultGeneration.known?.contextWidth,
-          reasoningFallback:
-            existingExtension?.generation?.known?.reasoningFallback ?? defaultGeneration.known?.reasoningFallback,
-        },
-        advanced: existingExtension?.generation?.advanced,
-        compaction: {
-          strategy: existingExtension?.generation?.compaction?.strategy ?? 'none',
-          minKeepTurns: existingExtension?.generation?.compaction?.minKeepTurns ?? 15,
-        },
-        importedPresetMeta: existingExtension?.generation?.importedPresetMeta,
-      },
-      acting: {
-        ...existingExtension?.acting,
-        modelExpressionPrompt: existingExtension?.acting?.modelExpressionPrompt ?? defaultActing.modelExpressionPrompt,
-        speechExpressionPrompt:
-          existingExtension?.acting?.speechExpressionPrompt ?? defaultActing.speechExpressionPrompt,
-        speechMannerismPrompt: existingExtension?.acting?.speechMannerismPrompt ?? defaultActing.speechMannerismPrompt,
-        idleAnimations: existingExtension?.acting?.idleAnimations ?? defaultActing.idleAnimations,
-      },
-      outfits: existingExtension?.outfits ?? [],
-      agents: existingExtension?.agents ?? {},
-      heartbeats: {
-        ...existingExtension?.heartbeats,
-        enabled: existingExtension?.heartbeats?.enabled ?? defaultHeartbeats.enabled,
-        intervalMinutes: existingExtension?.heartbeats?.intervalMinutes ?? defaultHeartbeats.intervalMinutes,
-        prompt: existingExtension?.heartbeats?.prompt ?? defaultHeartbeats.prompt,
-        injectIntoPrompt: existingExtension?.heartbeats?.injectIntoPrompt ?? defaultHeartbeats.injectIntoPrompt,
-        useAsLocalGate: existingExtension?.heartbeats?.useAsLocalGate ?? defaultHeartbeats.useAsLocalGate,
-        contextOptions: {
-          ...existingExtension?.heartbeats?.contextOptions,
-          windowHistory:
-            existingExtension?.heartbeats?.contextOptions?.windowHistory ??
-            defaultHeartbeats.contextOptions!.windowHistory,
-          systemLoad:
-            existingExtension?.heartbeats?.contextOptions?.systemLoad ?? defaultHeartbeats.contextOptions!.systemLoad,
-          usageMetrics:
-            existingExtension?.heartbeats?.contextOptions?.usageMetrics ??
-            defaultHeartbeats.contextOptions!.usageMetrics,
-        },
-        schedule: {
-          ...existingExtension?.heartbeats?.schedule,
-          start: existingExtension?.heartbeats?.schedule?.start ?? defaultHeartbeats.schedule.start,
-          end: existingExtension?.heartbeats?.schedule?.end ?? defaultHeartbeats.schedule.end,
-        },
-        respectSchedule: existingExtension?.heartbeats?.respectSchedule ?? defaultHeartbeats.respectSchedule,
-      },
-      dreamState: {
-        ...existingExtension?.dreamState,
-        enabled: existingExtension?.dreamState?.enabled ?? defaultDreamState.enabled,
-        strictAfkGating: existingExtension?.dreamState?.strictAfkGating ?? defaultDreamState.strictAfkGating,
-        journalingThreshold:
-          existingExtension?.dreamState?.journalingThreshold ?? defaultDreamState.journalingThreshold,
-        maxSessionsPerDay: existingExtension?.dreamState?.maxSessionsPerDay ?? defaultDreamState.maxSessionsPerDay,
-        sessionTimeoutMinutes:
-          existingExtension?.dreamState?.sessionTimeoutMinutes ?? defaultDreamState.sessionTimeoutMinutes,
-        afkThresholdMinutes:
-          existingExtension?.dreamState?.afkThresholdMinutes ?? defaultDreamState.afkThresholdMinutes,
-        minConversationTurns:
-          existingExtension?.dreamState?.minConversationTurns ?? defaultDreamState.minConversationTurns,
-        lastProcessedAt: existingExtension?.dreamState?.lastProcessedAt ?? defaultDreamState.lastProcessedAt,
-        dailyRunDate: existingExtension?.dreamState?.dailyRunDate ?? defaultDreamState.dailyRunDate,
-        dailyRunCount: existingExtension?.dreamState?.dailyRunCount ?? defaultDreamState.dailyRunCount,
-      },
-      shortTermMemory: {
-        windowSize: existingExtension?.shortTermMemory?.windowSize ?? defaultShortTermMemory.windowSize,
-        tokenBudgetPerDay:
-          existingExtension?.shortTermMemory?.tokenBudgetPerDay ?? defaultShortTermMemory.tokenBudgetPerDay,
-      },
-      proactivity_metrics: {
-        ...existingExtension?.proactivity_metrics,
-        ttsCount: existingExtension?.proactivity_metrics?.ttsCount ?? 0,
-        sttCount: existingExtension?.proactivity_metrics?.sttCount ?? 0,
-        chatCount: existingExtension?.proactivity_metrics?.chatCount ?? 0,
-        totalTurns: existingExtension?.proactivity_metrics?.totalTurns ?? 0,
-      },
-      visual_assets: (existingExtension as any)?.visual_assets || {},
-      eternal_record: (existingExtension as any)?.eternal_record || { relational_milestones: [], lore_bits: [] },
-      active_concepts: (existingExtension as any)?.active_concepts ?? [],
-      groundingEnabled: existingExtension?.groundingEnabled ?? false,
-      imageJournal: (existingExtension as any)?.imageJournal || { selfie: false },
-    }
-  }
-
-  /**
    * Creates a normalized AiriCard from a Card or ccv3 input.
    *
    * Handles both Character Card V3 format (with `data` property)
@@ -806,7 +832,13 @@ export const useAiriCardStore = defineStore('airi-card', () => {
         tags: ccv3Card.data.tags ?? [],
         extensions: {
           ...ccv3Card.data.extensions,
-          airi: stripEmbeddedBackgroundData(resolveAiriExtension(ccv3Card)),
+          airi: stripEmbeddedBackgroundData(
+            resolveAiriExtension(ccv3Card, {
+              stageModelSelected: stageModelStore.stageModelSelected,
+              activeConsciousnessProvider: activeConsciousnessProvider.value,
+              activeConsciousnessModel: activeConsciousnessModel.value,
+            }),
+          ),
         },
       }
     }
@@ -827,7 +859,13 @@ export const useAiriCardStore = defineStore('airi-card', () => {
       ...cardData,
       extensions: {
         ...cardData.extensions,
-        airi: stripEmbeddedBackgroundData(resolveAiriExtension(card)),
+        airi: stripEmbeddedBackgroundData(
+          resolveAiriExtension(card, {
+            stageModelSelected: stageModelStore.stageModelSelected,
+            activeConsciousnessProvider: activeConsciousnessProvider.value,
+            activeConsciousnessModel: activeConsciousnessModel.value,
+          }),
+        ),
       },
     }
   }

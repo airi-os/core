@@ -123,13 +123,13 @@
 
 ## Phase 11: Testing & Validation
 
-- [ ] **T11.1**: Add unit tests for `parsePngCharaPayload()` — test with valid/invalid PNG data
-- [ ] **T11.2**: Add unit tests for `buildCharaCardV2()` — verify AIRI extensions are correctly nested
-- [ ] **T11.3**: Add unit tests for `compactCard()` and `stripEmbeddedBackgroundData()` — verify data stripping
-- [ ] **T11.4**: Add unit tests for `resolveAiriExtension()` — verify defaults for all new fields
-- [ ] **T11.5**: Add unit tests for PNG chunk utilities (CRC32, text chunk creation/injection)
-- [ ] **T11.6**: Add unit tests for `mapEntriesSerializer` — verify Map JSON round-tripping
-- [ ] **T11.7**: Add unit tests for `buildSystemPrompt()` — verify prompt assembly from card fields
-- [ ] **T11.8**: Run `pnpm typecheck` across affected packages (`@proj-airi/stage-ui`, `@proj-airi/stage-pages`, `@proj-airi/stage-tamagotchi`, `@proj-airi/stage-web`)
-- [ ] **T11.9**: Run `pnpm format:check` and fix any formatting issues
-- [ ] **T11.10**: Manual smoke test: create card with all tabs, export as JSON, re-import, export as PNG, verify SillyTavern compatibility
+- [x] **T11.1**: Add unit tests for `parsePngCharaPayload()` — test with valid/invalid PNG data
+- [x] **T11.2**: Add unit tests for `buildCharaCardV2()` — verify AIRI extensions are correctly nested
+- [x] **T11.3**: Add unit tests for `compactCard()` and `stripEmbeddedBackgroundData()` — verify data stripping
+- [x] **T11.4**: Add unit tests for `resolveAiriExtension()` — verify defaults for all new fields
+- [x] **T11.5**: Add unit tests for PNG chunk utilities (CRC32, text chunk creation/injection)
+- [x] **T11.6**: Add unit tests for `mapEntriesSerializer` — verify Map JSON round-tripping
+- [x] **T11.7**: Add unit tests for `buildSystemPrompt()` — verify prompt assembly from card fields
+- [x] **T11.8**: Run `pnpm typecheck` across affected packages (`@proj-airi/stage-ui`, `@proj-airi/stage-pages`, `@proj-airi/stage-tamagotchi`, `@proj-airi/stage-web`)
+- [x] **T11.9**: Run `pnpm format:check` and fix any formatting issues
+- [x] **T11.10**: Manual smoke test: create card with all tabs, export as JSON, re-import, export as PNG, verify SillyTavern compatibility
