@@ -1,4 +1,5 @@
 import type { AiriCard } from '@proj-airi/stage-ui/stores/modules/airi-card'
+import * as v from 'valibot'
 
 /**
  * Creates a CRC32 lookup table for PNG chunk checksums.
@@ -118,6 +119,46 @@ export function utf8ToBase64(input: string): string {
 }
 
 /**
+ * Valibot schema for chara_card_v2 payload validation
+ */
+export const CharaCardV2Schema = v.object({
+  spec: v.optional(v.string()),
+  spec_version: v.optional(v.string()),
+  data: v.optional(
+    v.object({
+      name: v.optional(v.string()),
+      description: v.optional(v.string()),
+      personality: v.optional(v.string()),
+      scenario: v.optional(v.string()),
+      first_mes: v.optional(v.string()),
+      mes_example: v.optional(v.string()),
+      creator_notes: v.optional(v.string()),
+      system_prompt: v.optional(v.string()),
+      post_history_instructions: v.optional(v.string()),
+      alternate_greetings: v.optional(v.array(v.string())),
+      tags: v.optional(v.array(v.string())),
+      creator: v.optional(v.string()),
+      character_version: v.optional(v.string()),
+      extensions: v.optional(v.record(v.unknown())),
+    }),
+  ),
+  name: v.optional(v.string()),
+  description: v.optional(v.string()),
+  personality: v.optional(v.string()),
+  scenario: v.optional(v.string()),
+  first_mes: v.optional(v.string()),
+  mes_example: v.optional(v.string()),
+  creator_notes: v.optional(v.string()),
+  system_prompt: v.optional(v.string()),
+  post_history_instructions: v.optional(v.string()),
+  alternate_greetings: v.optional(v.array(v.string())),
+  tags: v.optional(v.array(v.string())),
+  creator: v.optional(v.string()),
+  character_version: v.optional(v.string()),
+  extensions: v.optional(v.record(v.unknown())),
+})
+
+/**
  * Parsed PNG chara payload with core card fields and optional extensions.
  */
 export interface ParsedCharaPayload {
@@ -180,7 +221,7 @@ export function parsePngCharaPayload(buffer: ArrayBuffer): ParsedCharaPayload {
         if (keyword === 'chara') {
           const text = new TextDecoder().decode(data.slice(separator + 1))
           const decoded = JSON.parse(base64ToUtf8(text))
-          return decoded as ParsedCharaPayload
+          return v.parse(CharaCardV2Schema, decoded)
         }
       }
     }

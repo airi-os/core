@@ -1045,21 +1045,6 @@ export const useAiriCardStore = defineStore('airi-card', () => {
         },
       } as any)
     },
-
-    currentModels: computed<AiriExtension['modules']>(() => {
-      return {
-        consciousness: {
-          provider: activeConsciousnessProvider.value,
-          model: activeConsciousnessModel.value,
-        },
-        speech: {
-          provider: activeSpeechProvider.value,
-          model: activeSpeechModel.value,
-          voice_id: activeSpeechVoiceId.value,
-        },
-        displayModelId: stageModelStore.stageModelSelected,
-      }
-    }),
     systemPrompt: computed(() => buildSystemPrompt(activeCard.value)),
   }
 })

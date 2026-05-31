@@ -65,6 +65,7 @@
     "@webgpu/types": "catalog:",
     "unplugin-info": "catalog:",
     "vitest": "catalog:vitest",
-    "vue-tsc": "^3.2.6"
+    "vue-tsc": "^3.2.6",
+    "valibot": "catalog:"
   }
 }
