@@ -44,7 +44,7 @@ export function createConnectionSupervisor(deps: ConnectionSupervisorDeps): Conn
     spawnWatchdogTimer = null
   }
 
-  async function enqueue(task: () => Promise<void>): Promise<void> {
+  function enqueue(task: () => Promise<void>): Promise<void> {
     const nextTask = transitionQueue.then(task)
 
     transitionQueue = nextTask
@@ -69,6 +69,7 @@ export function createConnectionSupervisor(deps: ConnectionSupervisorDeps): Conn
 
       const timeoutMs = deps.spawnTimeoutMs ?? DEFAULT_SPAWN_TIMEOUT_MS
       spawnWatchdogTimer = setTimeout(() => {
+        // eslint-disable-next-line no-void
         void enqueue(async () => {
           if (stopping || state !== 'awaiting_spawn')
             return
@@ -141,7 +142,8 @@ export function createConnectionSupervisor(deps: ConnectionSupervisorDeps): Conn
   }
 
   const onSpawn = (): void => {
-    void enqueue(async () => {
+    // eslint-disable-next-line no-void
+    void enqueue(() => {
       attempts = 0
       transitionState('idle', 'spawn')
     })

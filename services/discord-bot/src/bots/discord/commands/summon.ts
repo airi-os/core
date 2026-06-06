@@ -57,7 +57,7 @@ async function setSelfVoice(logger: Logg, me?: GuildMember | null) {
 
 export class VoiceManager extends EventEmitter {
   private logger = useLogg('VoiceManager').useGlobalConfig()
-  private processingVoice: boolean = false
+  private processingVoice = false
   private transcriptionTimeout: NodeJS.Timeout | null = null
   private userStates: Map<
     string,
@@ -233,6 +233,7 @@ export class VoiceManager extends EventEmitter {
       this.logger.warn('No voice connection found for guild')
     }
 
+    // eslint-disable-next-line consistent-return
     return connection
   }
 
@@ -416,10 +417,13 @@ export class VoiceManager extends EventEmitter {
 
     const state = this.userStates.get(userId)
 
-    const processBuffer = async (buffer: Buffer) => {
+    const processBuffer = (buffer: Buffer) => {
       try {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         state!.buffers.push(buffer)
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         state!.totalLength += buffer.length
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         state!.lastActive = Date.now()
 
         this.debouncedProcessTranscription(userId, member, guildId, channelId)
@@ -544,6 +548,7 @@ export class VoiceManager extends EventEmitter {
     }
   }
 
+  // eslint-disable-next-line consistent-return
   async handleJoinChannelCommand(interaction: ChatInputCommandInteraction<CacheType>) {
     try {
       const currVoiceChannel = (interaction.member as GuildMember).voice.channel

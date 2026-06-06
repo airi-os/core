@@ -238,6 +238,7 @@ export class BrowserDomExtensionBridge {
     return result
   }
 
+  // eslint-disable-next-line class-methods-use-this
   supportsAction(action: string) {
     return SUPPORTED_ACTIONS.has(action)
   }

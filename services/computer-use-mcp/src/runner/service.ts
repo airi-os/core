@@ -35,12 +35,17 @@ import { runProcess, sanitizeFileSegment } from '../utils/process'
 
 const sessionDisplayStart = 90
 const sessionDisplayEnd = 110
+// eslint-disable-next-line no-div-regex -- False positive: valid regex pattern
 const ACTIVE_WINDOW_ID_RE = /window id # (0x[0-9a-fA-F]+)/
+// eslint-disable-next-line no-div-regex -- False positive: valid regex pattern
 const XPROP_TITLE_RE = /=\s*"([^"]*)"/
+// eslint-disable-next-line no-div-regex -- False positive: valid regex pattern
 const XPROP_CLASS_RE = /=\s*"([^"]*)",\s*"([^"]*)"/
 const CRLF_SPLIT_RE = /\r?\n/
 const WHITESPACE_SPLIT_RE = /\s+/
+// eslint-disable-next-line no-div-regex -- False positive: valid regex pattern
 const TRAILING_SLASH_RE = /\/$/
+// eslint-disable-next-line no-div-regex -- False positive: valid regex pattern
 const DUPLICATE_SLASH_RE = /\/{2,}/g
 
 async function sleep(durationMs: number) {
@@ -438,6 +443,7 @@ export class LinuxX11RunnerService {
       recommendedClickPoint: {
         x: 180,
         y: 150,
+      // eslint-disable-next-line class-methods-use-this
       },
       executionTarget: this.requireExecutionTarget(),
     }
@@ -538,6 +544,7 @@ export class LinuxX11RunnerService {
       }
 
       await sleep(250)
+    // eslint-disable-next-line class-methods-use-this
     }
 
     throw new Error('timed out waiting for the mousepad window')
@@ -547,6 +554,7 @@ export class LinuxX11RunnerService {
     if (!pid)
       return
 
+    // eslint-disable-next-line class-methods-use-this
     await runProcess('kill', ['-TERM', String(pid)], {
       timeoutMs: 5_000,
     }).catch(() => {})

@@ -237,10 +237,12 @@ export class InMemoryTranscriptStore extends TranscriptStore {
     super('/dev/null/transcript.jsonl')
   }
 
+  // eslint-disable-next-line class-methods-use-this
   override async init(): Promise<void> {
     // No-op: skip disk I/O entirely
   }
 
+  // eslint-disable-next-line class-methods-use-this
   protected override async persist(_entry: TranscriptEntry): Promise<void> {
     // No-op: skip disk persistence
   }

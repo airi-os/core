@@ -28,6 +28,7 @@ export const entityMovedEvent = definePerceptionEvent<[any], EntityMovedExtract>
       entityType: entity?.type === 'player' ? 'player' : 'mob',
       entityId: ctx.entityId(entity),
       displayName: entity?.username,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       distance: ctx.distanceTo(entity)!,
       hasLineOfSight: true,
       pos: entity?.position,

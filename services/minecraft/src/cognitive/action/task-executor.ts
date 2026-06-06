@@ -83,6 +83,7 @@ export class TaskExecutor extends EventEmitter {
 
       // Interrupts are special - no feedback needed
       if (error instanceof ActionError && error.code === 'INTERRUPTED') {
+        // eslint-disable-next-line consistent-return
         return
       }
 

@@ -112,7 +112,9 @@ export interface WorkflowDefinition {
  * action executor can handle, or return undefined if the step is a
  * non-action step (evaluate, summarize).
  */
+// eslint-disable-next-line consistent-return
 export function resolveStepAction(step: WorkflowStepTemplate): ActionInvocation | undefined {
+  // eslint-disable-next-line default-case
   switch (step.kind) {
     case 'ensure_app':
       return { kind: 'focus_app', input: { app: step.params.app as string } }

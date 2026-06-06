@@ -58,7 +58,7 @@ export const actionsList: Action[] = [
     description: 'Force stop all actions', // TODO: include name of the current action in description?
     execution: 'async',
     schema: z.object({}),
-    perform: mineflayer => async () => {
+    perform: mineflayer => () => {
       mineflayer.interrupt('stop tool called')
 
       return 'all actions stopped'

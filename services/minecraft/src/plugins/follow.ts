@@ -44,6 +44,7 @@ export function FollowCommand(options?: { rangeGoal: number }): MineflayerPlugin
       }
 
       bot.onCommand('follow', (ctx) => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const username = ctx.command!.sender
         if (!username) {
           throw new Error('Please specify a player name!')

@@ -740,7 +740,7 @@ export class RunStateManager {
 
   /** Whether there is a task currently in progress. */
   hasActiveTask(): boolean {
-    return !!this.state.activeTask
+    return Boolean(this.state.activeTask)
       && this.state.activeTask.phase !== 'completed'
       && this.state.activeTask.phase !== 'failed'
   }

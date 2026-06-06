@@ -31,21 +31,26 @@ export function matchCondition(
       return value !== condition.ne
     }
     if ('lt' in condition) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return typeof value === 'number' && value < condition.lt!
     }
     if ('lte' in condition) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return typeof value === 'number' && value <= condition.lte!
     }
     if ('gt' in condition) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return typeof value === 'number' && value > condition.gt!
     }
     if ('gte' in condition) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return typeof value === 'number' && value >= condition.gte!
     }
     if ('in' in condition) {
       return (condition.in as readonly unknown[]).includes(value)
     }
     if ('contains' in condition) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return typeof value === 'string' && value.includes(condition.contains!)
     }
   }

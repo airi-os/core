@@ -268,6 +268,7 @@ process.on('message', (message: ParentToWorkerMessage) => {
 
   if (message.type === 'evaluate' && !hasStarted) {
     hasStarted = true
+    // eslint-disable-next-line no-void
     void runEvaluation(message.payload)
   }
 })

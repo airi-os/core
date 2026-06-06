@@ -33,6 +33,7 @@ export function startAiriClientConnection(client: AiriClientLike, deps: {
     }).warn('AIRI server connection closed; retrying in background')
   }
 
+  // eslint-disable-next-line no-void
   void client.connect()
     .then(() => {
       deps.logger.withFields({

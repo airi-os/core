@@ -199,7 +199,7 @@ export class DebugService {
       case 'debug:tools_list':
         this.server.broadcast({
           type: 'debug:tools_list',
-          payload: payload as { tools: any[] },
+          payload: payload as { tools: unknown[] },
         })
         break
       case 'debug:tool_result':

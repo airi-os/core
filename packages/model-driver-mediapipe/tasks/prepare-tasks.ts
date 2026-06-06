@@ -45,6 +45,7 @@ async function downloadAsset(key: string, url: string, outputPath: string) {
 
   const downloadWithRetry = withRetry(async () => {
     attempt += 1
+    // eslint-disable-next-line no-console
     console.log(`Downloading MediaPipe vision task asset for ${key} from ${url} (attempt ${attempt})...`)
 
     try {
@@ -55,6 +56,7 @@ async function downloadAsset(key: string, url: string, outputPath: string) {
 
       await fs.writeFile(tempPath, Buffer.from(response))
       await fs.rename(tempPath, outputPath)
+      // eslint-disable-next-line no-console
       console.log(`MediaPipe vision task asset for ${key} saved to ${outputPath}`)
     }
     finally {
@@ -81,6 +83,7 @@ await fs.mkdir(assetsRoot, { recursive: true })
 
 for (const { key, source, outputPath } of taskTargets) {
   if (await isUsableFile(outputPath)) {
+    // eslint-disable-next-line no-console
     console.log(`MediaPipe vision task asset for ${key} already exists at ${outputPath}, skipping download.`)
     continue
   }
@@ -97,4 +100,5 @@ const wasmEntries = await fs.readdir(wasmOutputDir)
 if (!wasmEntries.length)
   throw new Error(`Failed to ensure MediaPipe WASM assets: ${wasmOutputDir} is empty`)
 
+// eslint-disable-next-line no-console
 console.log('All MediaPipe vision task assets are prepared.')

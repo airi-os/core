@@ -621,7 +621,7 @@ export function extractJavaScriptCandidate(input: string): string {
   // of reasoning before the code. The previous `^...$` anchoring only matched a reply that was nothing
   // but a fence, so any leading prose caused the entire prose+code to be executed as a script.
   // eslint-disable-next-line regexp/no-super-linear-backtracking
-  const fenced = trimmed.match(/```(?:js|javascript|ts|typescript)?[^\S\r\n]*\r?\n?([\s\S]*?)```/i)
+  const fenced = trimmed.match(/```(?:js|javascript|ts|typescript)?[^\S\r\n]*\r?\n?([\s\S]*?)```/iu)
   if (fenced?.[1])
     return fenced[1].trim()
 
@@ -639,11 +639,11 @@ function isEdgeProseLine(line: string): boolean {
   if (!t)
     return false
   // Any JS structure means it's code, keep it (covers chat strings, which carry the CJK inside `(...)`).
-  if (/[()[\]{}=;]/.test(t))
+  if (/[()[\]{}=;]/u.test(t))
     return false
   // Otherwise treat a line containing CJK (Chinese/Japanese/Korean) as prose — conservative, so plain
   // ASCII code lines are never stripped.
-  return /[\u4E00-\u9FFF\u3040-\u30FF\uAC00-\uD7AF]/.test(t)
+  return /[\u4E00-\u9FFF\u3040-\u30FF\uAC00-\uD7AF]/u.test(t)
 }
 
 /**
@@ -682,6 +682,7 @@ function isSyntacticallyValidScript(candidate: string): boolean {
 
   try {
     // eslint-disable-next-line no-new-func
+    // eslint-disable-next-line no-void
     void new Function(`return (async () => {\n${candidate}\n})()`)
     return true
   }
@@ -900,6 +901,7 @@ export class JavaScriptPlanner {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   public canEvaluateAsExpression(content: string): boolean {
     const script = extractJavaScriptCandidate(content)
     if (!script.trim())
@@ -909,6 +911,7 @@ export class JavaScriptPlanner {
       // NOTICE: This parse-only check stays in the host runtime and never executes
       // untrusted code. It only decides whether REPL input can be wrapped as an expression.
       // eslint-disable-next-line no-new-func
+      // eslint-disable-next-line no-void
       void new Function(`return (async () => (\n${script}\n))()`)
       return true
     }
@@ -1104,6 +1107,7 @@ export class JavaScriptPlanner {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private buildConversationHistorySeed(messages: unknown): Array<{ role: string, content: string }> {
     if (!Array.isArray(messages))
       return []
@@ -1120,6 +1124,7 @@ export class JavaScriptPlanner {
     }))
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private buildLlmLogSeed(llmLog: unknown): Array<Record<string, unknown>> {
     if (!llmLog || typeof llmLog !== 'object')
       return []
@@ -1133,6 +1138,7 @@ export class JavaScriptPlanner {
     )
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private readCurrentTurn(history: unknown): number {
     if (!history || typeof history !== 'object')
       return 0
@@ -1162,6 +1168,7 @@ export class JavaScriptPlanner {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private buildQuerySeed(mineflayer: Mineflayer): QuerySeed {
     const query = createQueryRuntime(mineflayer)
     return copyForIsolate({
@@ -1174,6 +1181,7 @@ export class JavaScriptPlanner {
     })
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private buildBootstrapScript(): string {
     return `;(() => {
 ${QUERY_BOOTSTRAP}
@@ -1371,6 +1379,7 @@ delete globalThis.__plannerLog
     return this.runAction(tool, this.mapToolArgs(tool, args))
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private mapArgsToParams(action: Action, args: unknown[]): Record<string, unknown> {
     const shape = action.schema.shape as Record<string, unknown>
     const keys = Object.keys(shape)
@@ -1489,6 +1498,7 @@ delete globalThis.__plannerLog
     return { action: { tool, params: parsed.data } }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private previewValue(value: unknown): string {
     if (value === null)
       return 'null'

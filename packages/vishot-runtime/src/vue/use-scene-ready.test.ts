@@ -15,6 +15,7 @@ vi.mock('../runtime/ready', () => ({
 class MockImage {
   private _src = ''
 
+  // eslint-disable-next-line class-methods-use-this
   addEventListener(type: string, listener: () => void): void {
     if (type === 'load') {
       queueMicrotask(listener)

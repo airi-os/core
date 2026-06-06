@@ -292,6 +292,7 @@ export class DiscordAdapter {
 
       log.log(`Interaction received: /${interaction.commandName} from ${interaction.user.tag}`)
 
+      // eslint-disable-next-line default-case
       switch (interaction.commandName) {
         case 'ping':
           await handlePing(interaction)

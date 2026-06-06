@@ -40,12 +40,13 @@ export function getNearestFreeSpace(
     count: 1000,
   })
 
-  for (let i = 0; i < empty_pos.length; i++) {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const pos of empty_pos) {
     let empty = true
     for (let x = 0; x < size; x++) {
       for (let z = 0; z < size; z++) {
-        const top = mineflayer.bot.blockAt(empty_pos[i].offset(x, 0, z))
-        const bottom = mineflayer.bot.blockAt(empty_pos[i].offset(x, -1, z))
+        const top = mineflayer.bot.blockAt(pos.offset(x, 0, z))
+        const bottom = mineflayer.bot.blockAt(pos.offset(x, -1, z))
         if (
           !top
           || top.name !== 'air'

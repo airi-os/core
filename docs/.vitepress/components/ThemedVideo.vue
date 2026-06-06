@@ -74,7 +74,7 @@ watch(currentSrc, async () => {
     // If src changes while visible (e.g. theme toggle), ensure we play the new src
     // Using nextTick to allow DOM update
     await nextTick()
-    videoRef.value?.play().catch(() => {})
+    videoRef.value?.play().catch(() => { })
   }
 })
 </script>

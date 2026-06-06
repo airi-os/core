@@ -132,7 +132,10 @@ function teardownAnalyzer() {
   try {
     analyzerSource?.disconnect()
   }
-  catch { }
+  // eslint-disable-next-line no-empty
+  catch {
+    // noop
+  }
   analyzerSource = undefined
   stopAnalyzer()
 }

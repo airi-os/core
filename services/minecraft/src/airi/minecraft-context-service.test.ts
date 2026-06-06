@@ -18,7 +18,7 @@ function fakeBot(): any {
 function makeService(masterUsername?: string) {
   const captured: any[] = []
   const airiBridge = {
-    onModuleAnnounced: vi.fn(() => () => {}),
+    onModuleAnnounced: vi.fn(() => () => { }),
     sendContextUpdate: vi.fn((update: any) => captured.push(update)),
   }
   const service = new MinecraftContextService({

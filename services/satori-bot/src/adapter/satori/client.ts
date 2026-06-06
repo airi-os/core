@@ -48,6 +48,7 @@ export class SatoriClient {
       return
     }
 
+    // eslint-disable-next-line consistent-return
     return new Promise((resolve, reject) => {
       try {
         log.log(`Connecting to Satori server: ${this.config.url}`)
@@ -62,6 +63,7 @@ export class SatoriClient {
         })
 
         this.ws.on('message', (data: WebSocket.Data) => {
+          // eslint-disable-next-line no-void
           void this.handleMessage(data)
         })
 
@@ -202,6 +204,7 @@ export class SatoriClient {
     if (this.shouldReconnect) {
       log.log('Attempting to reconnect in 5 seconds...')
       this.reconnectTimeout = setTimeout(() => {
+        // eslint-disable-next-line no-void
         void this.connect()
       }, 5000)
     }

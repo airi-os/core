@@ -26,11 +26,13 @@ import type {
 /**
  * Explain why an action is about to be performed, in plain language.
  */
+// eslint-disable-next-line consistent-return
 export function explainActionIntent(action: ActionInvocation, runState: RunState): string {
   const taskContext = runState.activeTask
     ? ` as part of task "${runState.activeTask.goal}" (step ${runState.activeTask.currentStepIndex + 1}/${runState.activeTask.steps.length})`
     : ''
 
+  // eslint-disable-next-line default-case
   switch (action.kind) {
     case 'screenshot':
       return `Taking a screenshot to observe the current state of the desktop${taskContext}.`
@@ -123,6 +125,7 @@ export function explainApprovalReason(
 /**
  * Explain the outcome of an action in plain language.
  */
+// eslint-disable-next-line consistent-return
 export function explainActionOutcome(params: {
   action: ActionInvocation
   succeeded: boolean
@@ -136,6 +139,7 @@ export function explainActionOutcome(params: {
     return buildFailureExplanation(action, errorMessage || 'unknown error', context)
   }
 
+  // eslint-disable-next-line default-case
   switch (action.kind) {
     case 'screenshot':
       return 'Screenshot captured successfully. The model can now analyze the current desktop state.'
@@ -184,6 +188,7 @@ function buildFailureExplanation(
   }
 
   // Provide targeted advice based on action type.
+  // eslint-disable-next-line default-case
   switch (action.kind) {
     case 'click':
     case 'type_text':

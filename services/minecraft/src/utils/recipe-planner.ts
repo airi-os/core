@@ -302,7 +302,9 @@ export class RecipePlanner {
     return lines.join('\n')
   }
 
+  // eslint-disable-next-line consistent-return
   private formatStatus(status: RecipeStatus): string {
+    // eslint-disable-next-line default-case
     switch (status) {
       case 'craftable':
         return 'CRAFTABLE - Ready to craft!'
@@ -317,7 +319,9 @@ export class RecipePlanner {
     }
   }
 
+  // eslint-disable-next-line consistent-return
   private formatStep(step: RecipeStep): string {
+    // eslint-disable-next-line default-case
     switch (step.action) {
       case 'craft': {
         const ingredients = Object.entries(step.ingredients || {})

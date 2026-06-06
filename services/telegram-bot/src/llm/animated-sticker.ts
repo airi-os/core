@@ -99,8 +99,11 @@ export async function interpretAnimatedSticker(bot: Bot, msg: Message, sticker: 
     for (const frame of frames) {
       try {
         const req = {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           apiKey: env.LLM_VISION_API_KEY!,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           baseURL: env.LLM_VISION_API_BASE_URL!,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           model: env.LLM_VISION_MODEL!,
           messages: message.messages(
             message.system(div(
@@ -157,8 +160,11 @@ export async function interpretAnimatedSticker(bot: Bot, msg: Message, sticker: 
     logger.log('Consolidating frames')
 
     const req = {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       apiKey: env.LLM_API_KEY!, // Using text-only LLM API
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       baseURL: env.LLM_API_BASE_URL!,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       model: env.LLM_MODEL!,
       messages: message.messages(
         message.system(
@@ -207,6 +213,7 @@ export async function interpretAnimatedSticker(bot: Bot, msg: Message, sticker: 
     await recordSticker(frames[0].base64, sticker.file_id, file.file_path, consolidatedResult.text, sticker.set_name, sticker.emoji, sticker.set_name)
     logger.withField('sticker', consolidatedResult.text).log('Interpreted animated sticker')
 
+    // eslint-disable-next-line consistent-return
     return consolidatedResult.text
   }
   catch (err) {

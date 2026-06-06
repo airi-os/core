@@ -69,7 +69,7 @@ export class MCPAdapter {
     this.mcpServer.resource(
       'timeline',
       new ResourceTemplate('twitter://timeline/{count}', {
-        list: async () => {
+        list: () => {
           logger.mcp.debug('Listing available timeline resources')
           return {
             resources: [{
@@ -401,6 +401,7 @@ export class MCPAdapter {
    * @param url Twitter URL
    * @returns Username or undefined if not a profile URL
    */
+  // eslint-disable-next-line class-methods-use-this
   private extractUsernameFromUrl(url: string): string | undefined {
     try {
       const parsedUrl = new URL(url)
@@ -442,6 +443,7 @@ export class MCPAdapter {
     }))
 
     // SSE endpoint
+    // eslint-disable-next-line consistent-return
     router.get('/sse', defineEventHandler(async (event) => {
       const node = event.node
       if (!node?.res || !node.req) {
@@ -604,7 +606,7 @@ export class MCPAdapter {
 }
 
 // h3 utility function: read body from event
-async function readBody(event: any): Promise<any> {
+async function readBody(event: unknown): Promise<unknown> {
   const buffers = []
   for await (const chunk of event.node.req) {
     buffers.push(chunk)

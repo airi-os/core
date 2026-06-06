@@ -15,7 +15,8 @@ function safeSend(message: ContentToBackgroundMessage) {
     return
 
   lastPayloadByType.set(message.type, serialized)
-  void browser.runtime.sendMessage(message).catch(() => {})
+  // eslint-disable-next-line no-void
+  void browser.runtime.sendMessage(message).catch(() => { })
 }
 
 function buildPageContext(site: VideoSite): PageContextPayload {
@@ -154,7 +155,7 @@ function observeSubtitleDom(site: VideoSite, onSubtitle: (payload: SubtitlePaylo
     selector = '.bpx-player-subtitle-panel-text, .bpx-player-subtitle-text'
 
   if (!selector)
-    return () => {}
+    return () => { }
 
   let lastText = ''
 

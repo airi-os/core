@@ -7,6 +7,7 @@ import { Transformer } from '@napi-rs/image'
 
 const SOURCE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp']
 
+// eslint-disable-next-line consistent-return
 async function transform(filePath: string): Promise<any> {
   if ((await stat(filePath)).isDirectory()) {
     return await Promise.allSettled(
@@ -16,6 +17,7 @@ async function transform(filePath: string): Promise<any> {
 
   const ext = path.extname(filePath).toLowerCase()
   if (!SOURCE_EXTENSIONS.includes(ext))
+    // eslint-disable-next-line consistent-return
     return
   const dist = path.join(
     path.dirname(filePath),

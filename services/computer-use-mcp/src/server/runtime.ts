@@ -89,7 +89,7 @@ export async function createRuntime(config = resolveComputerUseConfig(), options
       onSessionLost: () => {
         // NOTICE: Chrome session loss invalidates the agent-owned CDP endpoint.
         // Close the bridge proactively so later observe/ensure flows reconnect cleanly.
-        cdpBridgeManager.close().catch(() => {})
+        cdpBridgeManager.close().catch(() => { })
       },
     }),
     desktopSessionController: createDesktopSessionController(stateManager),

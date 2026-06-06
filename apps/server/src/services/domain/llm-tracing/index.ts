@@ -167,14 +167,14 @@ export interface TtsGenerationTrace {
 }
 
 const NOOP_CHAT_TRACE: ChatGenerationTrace = {
-  appendStreamChunk() {},
-  succeed() {},
-  fail() {},
+  appendStreamChunk() { },
+  succeed() { },
+  fail() { },
 }
 
 const NOOP_TTS_TRACE: TtsGenerationTrace = {
-  succeed() {},
-  fail() {},
+  succeed() { },
+  fail() { },
 }
 
 function startGeneration(input: GenerationInput): {

@@ -66,5 +66,5 @@ export async function checkEmailIdentifier(
     ))
     .limit(1)
 
-  return { exists: true, hasPassword: !!credential }
+  return { exists: true, hasPassword: Boolean(credential) }
 }

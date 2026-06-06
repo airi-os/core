@@ -30,7 +30,7 @@ describe('windowRoot', () => {
       callback(0)
       return 1
     }) as typeof requestAnimationFrame)
-    vi.stubGlobal('cancelAnimationFrame', (() => {}) as typeof cancelAnimationFrame)
+    vi.stubGlobal('cancelAnimationFrame', (() => { }) as typeof cancelAnimationFrame)
 
     const host = document.createElement('div')
     document.body.appendChild(host)
@@ -93,7 +93,7 @@ describe('windowRoot', () => {
       callback(0)
       return 1
     }) as typeof requestAnimationFrame)
-    vi.stubGlobal('cancelAnimationFrame', (() => {}) as typeof cancelAnimationFrame)
+    vi.stubGlobal('cancelAnimationFrame', (() => { }) as typeof cancelAnimationFrame)
 
     const host = document.createElement('div')
     document.body.appendChild(host)

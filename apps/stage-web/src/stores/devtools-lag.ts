@@ -162,6 +162,7 @@ export const useDevtoolsLagStore = defineStore('devtoolsLag', () => {
     resetRecordingSamples()
     recordingStartedAt.value = null
     recording.value = false
+    // eslint-disable-next-line consistent-return
     return snapshot
   }
 

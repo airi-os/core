@@ -111,6 +111,7 @@ function sendBridgePayload(payload) {
 }
 
 async function handleBridgeSocketMessage(raw) {
+  // eslint-disable-next-line no-undef-init -- Intentionally uninitialized, assigned in try block
   let data
   try {
     data = JSON.parse(String(raw))
@@ -417,6 +418,7 @@ async function readAllFramesDOMWithOffsets(tabId, frameIds, opts) {
 async function handleCommand(cmd) {
   const { action, id } = cmd
   try {
+    // eslint-disable-next-line no-undef-init -- Intentionally uninitialized, assigned in try block
     let result
     const tab = await getActiveTab()
     const tabId = cmd.tabId || (tab && tab.id)

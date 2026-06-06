@@ -29,11 +29,13 @@ export interface LLMResult {
 export class LLMAgent {
   constructor(private config: LLMConfig) { }
 
+  // eslint-disable-next-line class-methods-use-this
   private isCerebrasBaseURL(baseURL: string): boolean {
     const normalized = baseURL.toLowerCase()
     return normalized.includes('cerebras.ai') || normalized.includes('cerebras.com')
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private createLinkedAbortController(parentSignal?: AbortSignal): {
     controller: AbortController
     dispose: () => void
@@ -42,7 +44,7 @@ export class LLMAgent {
     if (!parentSignal) {
       return {
         controller,
-        dispose: () => {},
+        dispose: () => { },
       }
     }
 
@@ -50,7 +52,7 @@ export class LLMAgent {
       controller.abort(parentSignal.reason)
       return {
         controller,
-        dispose: () => {},
+        dispose: () => { },
       }
     }
 

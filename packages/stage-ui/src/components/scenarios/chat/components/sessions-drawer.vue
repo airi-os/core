@@ -155,7 +155,7 @@ async function selectSession(sessionId: string) {
     trackChatSessionSelected({
       source: 'sessions_drawer',
       message_count: (sessionMessages.value[sessionId] ?? []).filter(message => message.role !== 'system').length,
-      cloud_synced: !!selectedRow.meta.cloudChatId,
+      cloud_synced: Boolean(selectedRow.meta.cloudChatId),
     })
   }
   chatSession.setActiveSession(sessionId)

@@ -142,6 +142,7 @@ export async function executeSandboxWorker(
       const timeoutError = createWorkerError(
         withCapturedStderr(`Sandbox worker timed out after ${hardTimeoutMs}ms`),
       )
+      // eslint-disable-next-line no-void
       void child.kill('SIGKILL')
       finalize(() => reject(timeoutError))
     }, hardTimeoutMs)
@@ -173,6 +174,7 @@ export async function executeSandboxWorker(
       }
 
       if (message.type === 'bridge-request') {
+        // eslint-disable-next-line no-void
         void respondToBridgeRequest(message)
         return
       }
@@ -188,6 +190,7 @@ export async function executeSandboxWorker(
       }
 
       if (message.type === 'catastrophic-error') {
+        // eslint-disable-next-line no-void
         void child.kill('SIGKILL')
         finalize(() => reject(createWorkerError(withCapturedStderr(message.error.message), undefined, message.error)))
       }

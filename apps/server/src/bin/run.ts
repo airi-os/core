@@ -45,6 +45,7 @@ function isExecutedAsMainModule(): boolean {
 }
 
 if (isExecutedAsMainModule()) {
+  // eslint-disable-next-line no-void
   void main().catch((error: unknown) => {
     process.stderr.write(`${errorMessageFromUnknown(error)}\n`)
     process.exit(1)

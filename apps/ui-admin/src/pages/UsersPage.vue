@@ -55,6 +55,7 @@ const pageEnd = computed(() => Math.min(currentPage.value * pageSize, totalUsers
 const isInitialLoading = computed(() => loading.value && users.value.length === 0)
 
 onMounted(() => {
+  // eslint-disable-next-line no-void
   void loadUsers(1)
 })
 
@@ -100,15 +101,18 @@ function setFilter(key: string, value: string) {
   if (key !== 'status')
     return
   statusFilter.value = value
+  // eslint-disable-next-line no-void
   void loadUsers(1)
 }
 
 function setPage(page: number) {
+  // eslint-disable-next-line no-void
   void loadUsers(page)
 }
 
 function setSearch(value: string) {
   search.value = value
+  // eslint-disable-next-line no-void
   void loadUsers(1)
 }
 
@@ -120,6 +124,7 @@ function setSort(key: string) {
     sortKey.value = key
     sortDirection.value = key === 'createdAt' ? 'desc' : 'asc'
   }
+  // eslint-disable-next-line no-void
   void loadUsers(1)
 }
 

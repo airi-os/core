@@ -183,7 +183,7 @@ export async function captureBrowserRoots(request: BrowserCaptureRequest): Promi
       return artifacts
     }
     finally {
-      await context.close().catch(() => {})
+      await context.close().catch(() => { })
     }
   }
   finally {

@@ -47,7 +47,10 @@ function extractSchemaDefaults(definition: ProviderDefinition<any>, t: ComposerT
     if (parsed?.success && typeof parsed.data === 'object' && parsed.data !== null) {
       Object.assign(defaults, parsed.data as Record<string, unknown>)
     }
-  } catch {}
+  // eslint-disable-next-line no-empty
+  } catch {
+    // noop
+  }
 
   return defaults
 }

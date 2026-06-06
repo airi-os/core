@@ -217,6 +217,7 @@ export async function ensureDynamicFirstPartyRedirectUri(
 
   let normalizedRedirectUri: string | null = null
 
+  // eslint-disable-next-line default-case
   switch (clientId) {
     case OIDC_CLIENT_ID_WEB:
       normalizedRedirectUri = buildTrustedWebRedirectUri(redirectUri, additionalTrustedOrigins)
@@ -664,6 +665,7 @@ export function createAuth(
         create: {
           after: async (user) => {
             metrics?.userRegistered.add(1)
+            // eslint-disable-next-line no-void
             void productEventService?.track({
               userId: user.id,
               feature: 'auth',
@@ -703,11 +705,13 @@ export function createAuth(
             metrics?.userLogin.add(1)
             // Best-effort analytics: session creation must not fail because
             // active-user reporting is degraded.
+            // eslint-disable-next-line no-void
             void db
               .update(authSchema.user)
               .set({ lastSeenAt: new Date() })
               .where(eq(authSchema.user.id, session.userId))
               .catch(err => logger.withError(err).withFields({ userId: session.userId }).warn('Failed to update user lastSeenAt; continuing session create'))
+            // eslint-disable-next-line no-void
             void productEventService?.track({
               userId: session.userId,
               feature: 'auth',

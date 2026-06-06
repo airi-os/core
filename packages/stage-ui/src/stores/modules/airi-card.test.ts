@@ -21,7 +21,7 @@ vi.mock('./artistry', async () => {
         providerOptions: {},
       }),
       actions: {
-        resetToGlobal() {},
+        resetToGlobal() { },
       },
     }),
   }

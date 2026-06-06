@@ -63,7 +63,9 @@ function snippet(text: string): string {
 /**
  * Generate a deterministic compacted summary for a transcript block.
  */
+// eslint-disable-next-line consistent-return
 export function compactBlock(block: TranscriptBlock): CompactedBlock {
+  // eslint-disable-next-line default-case
   switch (block.kind) {
     case 'tool_interaction': {
       const toolNames = (block.assistant.toolCalls ?? [])

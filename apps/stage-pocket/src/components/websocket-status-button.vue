@@ -54,6 +54,7 @@ const tooltipLabel = computed(() => {
 })
 
 function openConnectionSettings() {
+  // eslint-disable-next-line no-void
   void router.push('/settings/connection')
 }
 </script>

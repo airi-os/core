@@ -80,6 +80,7 @@ export default createContentLoader('**/*.md', {
             }
           }))
 
+          // eslint-disable-next-line consistent-return
           return {
             url,
             authors: authorsTransformed,

@@ -67,6 +67,7 @@ export function useTwitterTweetServices(ctx: Context): TwitterService {
 
       // Apply filter if specified
       if (options.filter) {
+        // eslint-disable-next-line default-case
         switch (options.filter) {
           case 'latest':
             await page.click(SELECTORS.SEARCH.LATEST_TAB)

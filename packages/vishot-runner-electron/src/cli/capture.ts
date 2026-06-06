@@ -237,6 +237,7 @@ async function main(): Promise<void> {
 }
 
 if (isDirectExecution()) {
+  // eslint-disable-next-line no-void
   void main().catch((error) => {
     console.error(errorMessageFrom(error) ?? 'Unknown CLI error')
     process.exitCode = 1

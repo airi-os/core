@@ -5,11 +5,11 @@ export const SERVER_AUTH_UI_BASE_PATH = '/auth'
 
 const SERVER_AUTH_UI_DIST_DIR = fileURLToPath(new URL('../../public/ui-server-auth', import.meta.url))
 const SERVER_AUTH_UI_INDEX_HTML_PATH = fileURLToPath(new URL('../../public/ui-server-auth/index.html', import.meta.url))
-const RE_HTML_LT = /</g
-const RE_HTML_GT = />/g
-const RE_HTML_AMP = /&/g
-const RE_UNICODE_LINE_SEPARATOR = /\u2028/g
-const RE_UNICODE_PARAGRAPH_SEPARATOR = /\u2029/g
+const RE_HTML_LT = /</gu
+const RE_HTML_GT = />/gu
+const RE_HTML_AMP = /&/gu
+const RE_UNICODE_LINE_SEPARATOR = /\u2028/gu
+const RE_UNICODE_PARAGRAPH_SEPARATOR = /\u2029/gu
 
 let cachedIndexHtml: string | null = null
 

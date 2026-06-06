@@ -112,7 +112,10 @@ const playbackManager = createPlaybackManager<AudioBuffer>({
           source.stop()
           source.disconnect()
         }
-        catch {}
+        // eslint-disable-next-line no-empty
+        catch {
+          // noop
+        }
         if (currentAudioSource.value === source)
           currentAudioSource.value = undefined
         resolve()

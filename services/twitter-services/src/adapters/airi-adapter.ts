@@ -119,7 +119,7 @@ export class AiriAdapter {
     })
 
     // Handle authentication
-    this.client.onEvent('module:authenticated', async (event) => {
+    this.client.onEvent('module:authenticated', (event) => {
       if (event.data.authenticated) {
         logger.main.log('X module authenticated with AIRI server')
       }

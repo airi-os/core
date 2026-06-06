@@ -56,6 +56,6 @@ export class Client {
   }
 
   isConnected(): boolean {
-    return !!this.client
+    return Boolean(this.client)
   }
 }

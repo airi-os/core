@@ -197,7 +197,7 @@ export async function goToPlayer(
   return result
 }
 
-export async function followPlayer(
+export function followPlayer(
   mineflayer: Mineflayer,
   username: string,
   distance = 4,

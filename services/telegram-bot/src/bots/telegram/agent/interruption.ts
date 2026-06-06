@@ -9,7 +9,7 @@ interface InterruptionParams {
   chatId: string
 }
 
-export async function shouldInterruptProcessing(params: InterruptionParams): Promise<boolean> {
+export function shouldInterruptProcessing(params: InterruptionParams): Promise<boolean> {
   // Base cases
   if (params.processingTime < 1000) {
     // Always allow very short processes to complete

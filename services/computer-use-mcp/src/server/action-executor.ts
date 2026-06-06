@@ -406,6 +406,7 @@ export function createExecuteAction(runtime: ComputerUseServerRuntime): ExecuteA
       let secretStructuredContent: Record<string, unknown> | undefined
       let summaryOverride: string | undefined
 
+      // eslint-disable-next-line default-case
       switch (normalizedAction.kind) {
         case 'screenshot': {
           const screenshot = await runtime.executor.takeScreenshot(normalizedAction.input)

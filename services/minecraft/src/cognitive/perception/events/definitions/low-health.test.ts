@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { lowHealthEvent } from './low-health'
 
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const filter = lowHealthEvent.mineflayer.filter!
 const extract = lowHealthEvent.mineflayer.extract
 

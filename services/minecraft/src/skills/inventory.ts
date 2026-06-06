@@ -112,7 +112,7 @@ export async function viewChest(mineflayer: Mineflayer): Promise<boolean> {
   }
 
   await goToPosition(mineflayer, chest.position.x, chest.position.y, chest.position.z, 2)
-  await withContainer(mineflayer, chest, async (container) => {
+  await withContainer(mineflayer, chest, (container) => {
     const items = container.containerItems()
     if (items.length === 0) {
       log(mineflayer, 'The chest is empty.')
@@ -181,12 +181,24 @@ async function dropItemsAndWaitForCollection(
 
   return new Promise((resolve, reject) => {
     let settled = false
+    let timeout: ReturnType<typeof setTimeout>
 
     const cleanup = () => {
-      // eslint-disable-next-line ts/no-use-before-define
       mineflayer.bot.removeListener('playerCollect', onCollect)
-      // eslint-disable-next-line ts/no-use-before-define
       mineflayer.removeListener('interrupt', onInterrupt)
+    }
+
+    const onCollect = (collector: any, _collected: any) => {
+      if (collector.username === username) {
+        log(mineflayer, `${username} received ${itemType}.`)
+        clearTimeout(timeout)
+        finishResolve()
+      }
+    }
+
+    const onInterrupt = () => {
+      clearTimeout(timeout)
+      finishReject(new ActionError('INTERRUPTED', `Failed to give ${itemType} to ${username}, action was cancelled`, { item: itemType }))
     }
 
     const finishResolve = () => {
@@ -205,23 +217,10 @@ async function dropItemsAndWaitForCollection(
       reject(error)
     }
 
-    const timeout = setTimeout(() => {
+    timeout = setTimeout(() => {
       clearTimeout(timeout)
       finishReject(new ActionError('INTERRUPTED', `Failed to give ${itemType} to ${username}, it was never received`, { item: itemType }))
     }, 3000)
-
-    const onCollect = (collector: any, _collected: any) => {
-      if (collector.username === username) {
-        log(mineflayer, `${username} received ${itemType}.`)
-        clearTimeout(timeout)
-        finishResolve()
-      }
-    }
-
-    const onInterrupt = () => {
-      clearTimeout(timeout)
-      finishReject(new ActionError('INTERRUPTED', `Failed to give ${itemType} to ${username}, action was cancelled`, { item: itemType }))
-    }
 
     mineflayer.bot.once('playerCollect', onCollect)
     mineflayer.once('interrupt', onInterrupt)

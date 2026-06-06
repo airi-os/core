@@ -46,6 +46,7 @@ describe('llmLog runtime', () => {
     const entries = seedEntries(4)
     const llmLog = createLlmLogRuntime(() => entries)
     const recent = llmLog.latest(2)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     recent[0]!.tags.push('mutated')
 
     expect(entries[3]?.tags.includes('mutated')).toBe(false)

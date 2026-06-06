@@ -29,6 +29,7 @@ export function useTwitterAuthServices(ctx: Context): TwitterService {
       }
 
       // Monitor page navigation events
+      // eslint-disable-next-line consistent-return
       ctx.page.once('framenavigated', async (frame) => {
         if (frame === ctx.page.mainFrame()) {
           const currentUrl = frame.url()

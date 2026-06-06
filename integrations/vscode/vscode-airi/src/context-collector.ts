@@ -102,6 +102,7 @@ export class ContextCollector {
   /**
    * Get workspace folder path
    */
+  // eslint-disable-next-line class-methods-use-this
   private getWorkspaceFolder(uri: vscode.Uri): string | undefined {
     const folder = vscode.workspace.getWorkspaceFolder(uri)
     return folder?.uri.fsPath
@@ -110,6 +111,7 @@ export class ContextCollector {
   /**
    * Get Git information (simplified)
    */
+  // eslint-disable-next-line class-methods-use-this
   private async getGitInfo(uri: vscode.Uri): Promise<{ branch: string, isDirty: boolean } | undefined> {
     try {
       const gitExtension = vscode.extensions.getExtension('vscode.git')?.exports

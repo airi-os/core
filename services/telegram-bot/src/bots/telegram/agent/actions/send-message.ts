@@ -79,8 +79,11 @@ export async function sendMessage(
 
   const systemContent = String(await messageSplit())
   const req = {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     apiKey: env.LLM_API_KEY!,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     baseURL: env.LLM_API_BASE_URL!,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     model: env.LLM_MODEL!,
     messages: message.messages(
       { role: 'system' as const, content: systemContent },
@@ -134,8 +137,9 @@ export async function sendMessage(
     try {
       await botContext.bot.api.sendChatAction(chatId, 'typing')
     }
+    // eslint-disable-next-line no-empty
     catch {
-
+      // noop
     }
     await sleep(item.length * 50)
 

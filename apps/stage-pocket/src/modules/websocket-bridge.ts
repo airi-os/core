@@ -113,6 +113,7 @@ class HostWebSocket implements WebSocketLike {
   }
 
   handleNativeEvent(event: HostBridgeEvent) {
+    // eslint-disable-next-line default-case
     switch (event.kind) {
       case 'open':
         this.readyState = HostWebSocket.OPEN

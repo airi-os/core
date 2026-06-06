@@ -6,5 +6,8 @@ import { runCLI } from './cli'
 try {
   module.enableCompileCache?.()
 }
-catch {}
+// eslint-disable-next-line no-empty
+catch {
+  // noop
+}
 runCLI()

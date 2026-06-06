@@ -23,11 +23,11 @@ const sectionTabs = computed(() => sidebar.value
   .map((val) => {
     return {
       label: val.text,
-      link: flatten(val.items ?? [], 'items').filter(i => !!i?.link)?.[0]?.link ?? val.link,
+      link: flatten(val.items ?? [], 'items').filter(i => Boolean(i)?.link)?.[0]?.link ?? val.link,
       icon: val.icon,
     }
   })
-  .filter(i => !!i?.link),
+  .filter(i => Boolean(i)?.link),
 )
 
 function isCharacterPage(link?: string) {

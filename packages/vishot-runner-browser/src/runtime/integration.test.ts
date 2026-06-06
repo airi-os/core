@@ -125,9 +125,9 @@ vi.mock('playwright', () => {
             newPage: async () => {
               return createFixturePage('')
             },
-            close: async () => {},
+            close: async () => { },
           }),
-          close: async () => {},
+          close: async () => { },
         }
       }),
     },

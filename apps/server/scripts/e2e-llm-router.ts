@@ -43,6 +43,7 @@ async function main() {
   // the router is actually sending when E2E fails. Remove after E2E passes.
   const debugFetch: typeof fetch = async (input, init) => {
     const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url
+    // eslint-disable-next-line no-console
     console.log(`  fetch → POST ${url}`)
     if (init?.headers) {
       const hdrs = init.headers as Record<string, string>
@@ -51,15 +52,18 @@ async function main() {
       // Never log credential substrings: a 30-char prefix of an OpenRouter
       // key (`sk-or-v1-bb1a38505a7309...`) is enough to identify the account.
       // Print presence only. Source: codex review 2026-05-15 #10.
+      // eslint-disable-next-line no-console
       console.log(`  auth   = ${auth ? '<set>' : '<none>'}`)
     }
     if (init?.body) {
+      // eslint-disable-next-line no-console
       console.log(`  body   = ${String(init.body).slice(0, 200)}`)
     }
     const res = await fetch(input as any, init as any)
     if (!res.ok) {
       const clone = res.clone()
       const text = await clone.text().catch(() => '<unreadable>')
+      // eslint-disable-next-line no-console
       console.log(`  ← ${res.status} body: ${text.slice(0, 300)}`)
     }
     return res
@@ -72,6 +76,7 @@ async function main() {
     fetchImpl: debugFetch,
   })
 
+  // eslint-disable-next-line no-console
   console.log('→ calling router.route() with model=chat-default')
   const start = Date.now()
   let response: Response
@@ -94,6 +99,7 @@ async function main() {
   }
 
   const elapsed = Date.now() - start
+  // eslint-disable-next-line no-console
   console.log(`← status ${response.status} (${elapsed}ms)`)
 
   if (!response.ok) {
@@ -109,10 +115,15 @@ async function main() {
     model?: string
   }
   const content = payload.choices?.[0]?.message?.content
+  // eslint-disable-next-line no-console
   console.log()
+  // eslint-disable-next-line no-console
   console.log('Assistant response:')
+  // eslint-disable-next-line no-console
   console.log(`  model:  ${payload.model ?? '<unknown>'}`)
+  // eslint-disable-next-line no-console
   console.log(`  text:   ${JSON.stringify(content)}`)
+  // eslint-disable-next-line no-console
   console.log(`  tokens: prompt=${payload.usage?.prompt_tokens ?? '?'} completion=${payload.usage?.completion_tokens ?? '?'}`)
 
   if (!content) {
@@ -121,7 +132,9 @@ async function main() {
     exit(1)
   }
 
+  // eslint-disable-next-line no-console
   console.log()
+  // eslint-disable-next-line no-console
   console.log('E2E PASS — router service successfully called OpenRouter and returned a usable response.')
   await redis.quit()
 }

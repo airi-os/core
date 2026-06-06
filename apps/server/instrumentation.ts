@@ -68,7 +68,7 @@ const otlpEndpoint = env.OTEL_EXPORTER_OTLP_ENDPOINT
 // (and vice versa). Both ride the same NodeSDK tracer provider; Langfuse adds
 // a second SpanProcessor that exports only its own observation spans (see
 // shouldExportSpan below), so the OTLP/Grafana trace stream is untouched.
-const langfuseEnabled = !!env.LANGFUSE_PUBLIC_KEY && !!env.LANGFUSE_SECRET_KEY
+const langfuseEnabled = Boolean(env.LANGFUSE_PUBLIC_KEY) && Boolean(env.LANGFUSE_SECRET_KEY)
 if (!otlpEndpoint && !langfuseEnabled) {
   console.info('[otel-preload] OpenTelemetry disabled (set OTEL_EXPORTER_OTLP_ENDPOINT and/or LANGFUSE_PUBLIC_KEY+LANGFUSE_SECRET_KEY to enable)')
 }
@@ -259,6 +259,7 @@ else {
     }
   }
   const shutdownAndExit = () => {
+    // eslint-disable-next-line no-void
     void shutdown().then(() => exit(0))
   }
   process.on('SIGTERM', shutdownAndExit)

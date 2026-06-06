@@ -20,6 +20,7 @@ async function writeResponse(response: RunnerResponse) {
 
 async function handleRequest(request: RunnerRequest) {
   try {
+    // eslint-disable-next-line default-case
     switch (request.method) {
       case 'initialize':
         await writeResponse({
@@ -155,15 +156,18 @@ rl.on('line', (line) => {
 })
 
 async function shutdown() {
-  await runner.shutdown().catch(() => {})
+  await runner.shutdown().catch(() => { })
 }
 
 process.on('SIGINT', () => {
+  // eslint-disable-next-line no-void
   void shutdown().finally(() => process.exit(0))
 })
 process.on('SIGTERM', () => {
+  // eslint-disable-next-line no-void
   void shutdown().finally(() => process.exit(0))
 })
 process.stdin.on('end', () => {
+  // eslint-disable-next-line no-void
   void shutdown().finally(() => process.exit(0))
 })

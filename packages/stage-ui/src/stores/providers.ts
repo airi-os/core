@@ -598,7 +598,7 @@ export const useProvidersStore = defineStore('providers', () => {
           return {
             errors,
             reason: errors.filter(e => e).map(e => String(e)).join(', ') || '',
-            valid: !!config.apiKey && !!config.baseUrl,
+            valid: Boolean(config.apiKey) && Boolean(config.baseUrl),
           }
         },
       },
@@ -734,7 +734,7 @@ export const useProvidersStore = defineStore('providers', () => {
           return {
             errors,
             reason: errors.filter(e => e).map(e => String(e)).join(', ') || '',
-            valid: !!config.apiKey && !!config.baseUrl,
+            valid: Boolean(config.apiKey) && Boolean(config.baseUrl),
           }
         },
       },
@@ -1008,7 +1008,7 @@ export const useProvidersStore = defineStore('providers', () => {
           return {
             errors,
             reason: errors.filter(e => e).map(e => String(e)).join(', ') || '',
-            valid: !!config.apiKey && !!config.baseUrl,
+            valid: Boolean(config.apiKey) && Boolean(config.baseUrl),
           }
         },
       },
@@ -1155,7 +1155,7 @@ export const useProvidersStore = defineStore('providers', () => {
           return {
             errors,
             reason: errors.filter(e => e).map(e => String(e)).join(', ') || '',
-            valid: !!config.apiKey && !!config.baseUrl,
+            valid: Boolean(config.apiKey) && Boolean(config.baseUrl),
           }
         },
       },
@@ -1320,7 +1320,7 @@ export const useProvidersStore = defineStore('providers', () => {
           return {
             errors,
             reason: errors.filter(e => e).map(e => String(e)).join(', ') || '',
-            valid: !!config.apiKey && !!config.baseUrl,
+            valid: Boolean(config.apiKey) && Boolean(config.baseUrl),
           }
         },
       },
@@ -1385,7 +1385,7 @@ export const useProvidersStore = defineStore('providers', () => {
           return {
             errors,
             reason: errors.filter(e => e).map(e => String(e)).join(', ') || '',
-            valid: !!config.apiKey && !!config.baseUrl && !!config.app && !!(config.app as any).appId,
+            valid: Boolean(config.apiKey) && Boolean(config.baseUrl) && Boolean(config.app) && !!(config.app as any).appId,
           }
         },
       },
@@ -1548,7 +1548,7 @@ export const useProvidersStore = defineStore('providers', () => {
           return {
             errors,
             reason: errors.filter(e => e).map(e => String(e)).join(', ') || '',
-            valid: !!config.apiKey,
+            valid: Boolean(config.apiKey),
           }
         },
       },
@@ -1716,7 +1716,7 @@ export const useProvidersStore = defineStore('providers', () => {
           return {
             errors,
             reason: errors.map(e => (e as Error).message).join(', ') || '',
-            valid: !!config.apiKey && !!config.baseUrl,
+            valid: Boolean(config.apiKey) && Boolean(config.baseUrl),
           }
         },
       },
@@ -1898,7 +1898,7 @@ export const useProvidersStore = defineStore('providers', () => {
           return {
             errors,
             reason: errors.map(e => (e as Error).message).join(', ') || '',
-            valid: !!config.apiKey && !!config.baseUrl,
+            valid: Boolean(config.apiKey) && Boolean(config.baseUrl),
           }
         },
       },
@@ -2036,7 +2036,7 @@ export const useProvidersStore = defineStore('providers', () => {
 
       defaultOptions: () => {
         const capabilities = getCachedWebGPUCapabilities()
-        const hasWebGPU = capabilities?.supported ?? (typeof navigator !== 'undefined' && !!navigator.gpu)
+        const hasWebGPU = capabilities?.supported ?? (typeof navigator !== 'undefined' && Boolean(navigator.gpu))
         const fp16Supported = capabilities?.fp16Supported ?? false
         const model = getDefaultKokoroModel(hasWebGPU, fp16Supported)
         return {
@@ -2093,7 +2093,7 @@ export const useProvidersStore = defineStore('providers', () => {
       capabilities: {
         listModels: async (_config: Record<string, unknown>) => {
           const caps = getCachedWebGPUCapabilities()
-          const hasWebGPU = caps?.supported ?? (typeof navigator !== 'undefined' && !!navigator.gpu)
+          const hasWebGPU = caps?.supported ?? (typeof navigator !== 'undefined' && Boolean(navigator.gpu))
           const fp16Supported = caps?.fp16Supported ?? false
           return kokoroModelsToModelInfo(hasWebGPU, t, fp16Supported)
         },
@@ -2112,7 +2112,7 @@ export const useProvidersStore = defineStore('providers', () => {
 
           // Validate platform requirements
           if (modelDef.platform === 'webgpu') {
-            const hasWebGPU = getCachedWebGPUCapabilities()?.supported ?? (typeof navigator !== 'undefined' && !!navigator.gpu)
+            const hasWebGPU = getCachedWebGPUCapabilities()?.supported ?? (typeof navigator !== 'undefined' && Boolean(navigator.gpu))
             if (!hasWebGPU) {
               throw new Error('WebGPU is required for this model but is not available in your browser')
             }
@@ -2156,7 +2156,7 @@ export const useProvidersStore = defineStore('providers', () => {
                   const modelDef = KOKORO_MODELS.find(m => m.id === modelId)
                   if (modelDef) {
                     if (modelDef.platform === 'webgpu') {
-                      const hasWebGPU = getCachedWebGPUCapabilities()?.supported ?? (typeof navigator !== 'undefined' && !!navigator.gpu)
+                      const hasWebGPU = getCachedWebGPUCapabilities()?.supported ?? (typeof navigator !== 'undefined' && Boolean(navigator.gpu))
                       if (!hasWebGPU) {
                         throw new Error('WebGPU is required for this model but is not available in your browser')
                       }
@@ -2308,6 +2308,7 @@ export const useProvidersStore = defineStore('providers', () => {
   }
 
   function unmarkProviderAdded(providerId: string) {
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete addedProviders.value[providerId]
   }
 
@@ -2413,6 +2414,7 @@ export const useProvidersStore = defineStore('providers', () => {
       }
 
       const loop = useIntervalFn(() => {
+        // eslint-disable-next-line no-void
         void validateProvider(providerId, { force: true })
       }, intervalMs, { immediate: false, immediateCallback: false })
       loop.resume()
@@ -2475,7 +2477,9 @@ export const useProvidersStore = defineStore('providers', () => {
   })
 
   function deleteProvider(providerId: string) {
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete providerCredentials.value[providerId]
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete providerRuntimeState.value[providerId]
     unmarkProviderAdded(providerId)
   }
@@ -2530,7 +2534,7 @@ export const useProvidersStore = defineStore('providers', () => {
 
       // Transform and store the models
       if (runtimeState) {
-        runtimeState.models = uniqBy(models.filter(model => !!model.id), m => m.id)
+        runtimeState.models = uniqBy(models.filter(model => Boolean(model.id)), m => m.id)
           .map(model => ({
             id: model.id,
             name: model.name,
@@ -2598,6 +2602,7 @@ export const useProvidersStore = defineStore('providers', () => {
 
     for (const providerId of changedProviders) {
       // Since credentials changed, dispose the cached instance so new creds take effect.
+      // eslint-disable-next-line no-void
       void disposeProviderInstance(providerId)
 
       // If the provider is configured and has the capability, refetch its models
@@ -2699,6 +2704,7 @@ export const useProvidersStore = defineStore('providers', () => {
     if (instance?.dispose)
       await instance.dispose()
 
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete providerInstanceCache.value[providerId]
   }
 
@@ -2760,7 +2766,7 @@ export const useProvidersStore = defineStore('providers', () => {
   }
 
   function shouldListProvider(providerId: string) {
-    return !!addedProviders.value[providerId] || isProviderConfigDirty(providerId)
+    return Boolean(addedProviders.value[providerId]) || isProviderConfigDirty(providerId)
   }
 
   const persistedProvidersMetadata = computed(() => {

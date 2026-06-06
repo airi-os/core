@@ -273,6 +273,7 @@ export function oidcJwtBearer(env: Env): BetterAuthPlugin {
               existingCookie ? `${existingCookie}; ${newCookieEntry}` : newCookieEntry,
             )
 
+            // eslint-disable-next-line consistent-return
             return { context: { headers: newHeaders } }
           }),
         },

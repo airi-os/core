@@ -27,6 +27,7 @@ function parseBoolean(value: string | undefined): boolean | undefined {
   return value.toLowerCase() === 'true' || value === '1'
 }
 
+// eslint-disable-next-line consistent-return
 export function loadConfig(): Config {
   const rawConfig = {
     satori: {

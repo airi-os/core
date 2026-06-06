@@ -55,7 +55,7 @@ const consciousnessStore = useConsciousnessStore()
 const { activeProvider: activeChatProvider, activeModel: activeChatModel } = storeToRefs(consciousnessStore)
 const chatStore = useChatOrchestratorStore()
 
-const shouldUseStreamInput = computed(() => supportsStreamInput.value && !!stream.value)
+const shouldUseStreamInput = computed(() => supportsStreamInput.value && Boolean(stream.value))
 
 const {
   init: initVAD,
@@ -110,6 +110,7 @@ async function handleSpeechStart() {
           return
         }
 
+        // eslint-disable-next-line no-void
         void (async () => {
           try {
             const provider = await providersStore.getProviderInstance(activeChatProvider.value)
@@ -144,10 +145,14 @@ function stopAudioInteraction() {
     stopOnStopRecord?.()
     stopOnStopRecord = undefined
     // Stop any active streaming transcription sessions to prevent session leakage
+    // eslint-disable-next-line no-void
     void stopStreamingTranscription(true)
     disposeVAD()
   }
-  catch {}
+  // eslint-disable-next-line no-empty
+  catch {
+    // noop
+  }
 }
 
 watch(enabled, async (val) => {

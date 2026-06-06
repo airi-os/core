@@ -34,6 +34,7 @@ export async function createBotContext(logger: Logg): Promise<BotContext> {
 export async function ensureChatContext(botCtx: BotContext, channelId: string): Promise<ChatContext> {
   const log = botCtx.logger
   if (botCtx.chats.has(channelId)) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const existing = botCtx.chats.get(channelId)!
     log
       .withField('channelId', channelId)
@@ -61,7 +62,7 @@ export async function ensureChatContext(botCtx: BotContext, channelId: string): 
     .withField('channelId', channelId)
     .withField('platform', newChatContext.platform)
     .withField('selfId', newChatContext.selfId)
-    .withField('foundInDb', !!channelInfo)
+    .withField('foundInDb', Boolean(channelInfo))
     .debug('ensureChatContext - creating new chatContext')
 
   botCtx.chats.set(channelId, newChatContext)

@@ -280,6 +280,7 @@ export default defineConfig({
             include: [/\.wasm$/i, /\.ttf$/i, /\.vrm$/i, /\.zip$/i], // in existing assets, wasm, ttf, vrm files are the largest ones
             manifest: true,
             clean: false,
+            // eslint-disable-next-line consistent-return
             contentTypeBy: (filename: string) => {
               if (filename.endsWith('.wasm')) {
                 return 'application/wasm'

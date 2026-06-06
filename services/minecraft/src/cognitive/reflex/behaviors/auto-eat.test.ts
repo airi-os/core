@@ -51,7 +51,7 @@ function runApi(opts: { onEquip?: () => void, onConsume?: () => void | Promise<v
     bot: {
       bot: {
         inventory: { items: () => [bread] },
-        equip: async () => {
+        equip: () => {
           seen.push(autonomy.reflexEngaged)
           opts.onEquip?.()
         },

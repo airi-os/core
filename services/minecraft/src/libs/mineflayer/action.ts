@@ -7,9 +7,9 @@ type ActionResult = unknown | Promise<unknown>
 export interface Action {
   readonly name: string
   readonly description: string
-  readonly schema: z.ZodObject<any>
+  readonly schema: z.ZodObject<unknown>
   readonly readonly?: boolean
   readonly followControl?: 'pause' | 'detach'
   readonly execution?: 'sync' | 'async'
-  readonly perform: (mineflayer: Mineflayer) => (...args: any[]) => ActionResult
+  readonly perform: (mineflayer: Mineflayer) => (...args: unknown[]) => ActionResult
 }

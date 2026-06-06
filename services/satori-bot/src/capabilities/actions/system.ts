@@ -6,7 +6,7 @@ import { listChannels } from '../../lib/db'
 // 1. Continue Action
 export const continueAction: ActionHandler = {
   name: 'continue',
-  execute: async (): Promise<ActionResult> => {
+  execute: (): Promise<ActionResult> => {
     return {
       success: true,
       shouldContinue: false,
@@ -18,7 +18,7 @@ export const continueAction: ActionHandler = {
 // 2. Break Action
 export const breakAction: ActionHandler = {
   name: 'break',
-  execute: async (_ctx, chatCtx): Promise<ActionResult> => {
+  execute: (_ctx, chatCtx): Promise<ActionResult> => {
     chatCtx.actions = []
     return {
       success: true,

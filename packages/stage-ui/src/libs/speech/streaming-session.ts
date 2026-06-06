@@ -104,16 +104,22 @@ export async function streamingSynthesize(options: StreamingTtsSessionOptions): 
       } finally {
         try {
           if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) ws.close()
-        } catch {}
+        // eslint-disable-next-line no-empty
+        } catch {
+          // noop
+        }
         if (options.signal != null) options.signal.removeEventListener('abort', onAbort)
       }
     }
 
     function onAbort() {
       settle(() => {
+        // eslint-disable-next-line no-empty
         try {
           ws.send(JSON.stringify({ event: 'cancel' }))
-        } catch {}
+        } catch {
+          // noop
+        }
         reject(options.signal?.reason ?? new DOMException('aborted', 'AbortError'))
       })
     }
@@ -153,6 +159,7 @@ export async function streamingSynthesize(options: StreamingTtsSessionOptions): 
         let evt: StreamingTtsServerEvent
         try {
           evt = JSON.parse(e.data) as StreamingTtsServerEvent
+        // eslint-disable-next-line default-case
         } catch {
           return
         }

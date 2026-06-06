@@ -18,6 +18,7 @@ const enabledCount = computed(() => packs.value.filter(pack => pack.enabled).len
 const disabledCount = computed(() => packs.value.length - enabledCount.value)
 
 onMounted(() => {
+  // eslint-disable-next-line no-void
   void loadPacks()
 })
 
@@ -43,6 +44,7 @@ function formatMultiplier(value: number): string {
 }
 
 function editPack(pack: VoicePack) {
+  // eslint-disable-next-line no-void
   void router.push(`/voice-packs/${encodeURIComponent(pack.id)}/edit`)
 }
 </script>

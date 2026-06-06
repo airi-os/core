@@ -293,7 +293,7 @@ describe('javaScriptPlanner', () => {
 
   it('supports expectation guardrails on structured action telemetry', async () => {
     const planner = new JavaScriptPlanner()
-    const executeAction = vi.fn(async () => ({
+    const executeAction = vi.fn(() => ({
       ok: true,
       movedDistance: 1.25,
       distanceToTargetAfter: 1.5,
@@ -314,7 +314,7 @@ describe('javaScriptPlanner', () => {
 
   it('throws when expectation guardrail fails', async () => {
     const planner = new JavaScriptPlanner()
-    const executeAction = vi.fn(async () => ({
+    const executeAction = vi.fn(() => ({
       ok: true,
       movedDistance: 0.1,
     }))
@@ -457,7 +457,7 @@ describe('javaScriptPlanner', () => {
 
   it('fails closed when a host bridge call never resolves', async () => {
     const planner = new JavaScriptPlanner({ bridgeTimeoutMs: 40 })
-    const executeAction = vi.fn(async () => await new Promise(() => {}))
+    const executeAction = vi.fn(async () => await new Promise(() => { }))
 
     await expect(planner.evaluate('await chat("hello")', actions, globals, executeAction)).rejects.toThrow(/Sandbox bridge timed out/i)
   })

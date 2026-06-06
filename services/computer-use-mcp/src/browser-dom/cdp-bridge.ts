@@ -364,6 +364,7 @@ export class CdpBridge {
   /**
    * Format the CDP accessibility tree as text for LLM context.
    */
+  // eslint-disable-next-line class-methods-use-this
   formatAXTreeAsText(snapshot: CdpAXSnapshot): string {
     const lines: string[] = []
     lines.push(`[Browser AXTree] ${snapshot.pageTitle} (${snapshot.pageUrl})`)

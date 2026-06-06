@@ -37,7 +37,9 @@ function getCoordinate(action: ActionInvocation) {
   }
 }
 
+// eslint-disable-next-line consistent-return
 function estimateOperationUnits(action: ActionInvocation) {
+  // eslint-disable-next-line default-case
   switch (action.kind) {
     case 'screenshot':
       return 3

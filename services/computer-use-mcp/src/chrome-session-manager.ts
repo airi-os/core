@@ -119,14 +119,14 @@ export function createChromeSessionManager(
   }
 
   async function terminateChromeProcess(pid: number): Promise<void> {
-    await runProcess('kill', ['-TERM', String(pid)], { timeoutMs: config.timeoutMs }).catch(() => {})
+    await runProcess('kill', ['-TERM', String(pid)], { timeoutMs: config.timeoutMs }).catch(() => { })
     await sleep(250)
 
     if (!await isProcessAlive(pid)) {
       return
     }
 
-    await runProcess('kill', ['-KILL', String(pid)], { timeoutMs: config.timeoutMs }).catch(() => {})
+    await runProcess('kill', ['-KILL', String(pid)], { timeoutMs: config.timeoutMs }).catch(() => { })
     await sleep(250)
 
     if (await isProcessAlive(pid)) {
@@ -149,7 +149,7 @@ export function createChromeSessionManager(
     if (activeProfileDir) {
       const profileDir = activeProfileDir
       activeProfileDir = undefined
-      await rm(profileDir, { recursive: true, force: true }).catch(() => {})
+      await rm(profileDir, { recursive: true, force: true }).catch(() => { })
       return
     }
     activeProfileDir = undefined
@@ -244,7 +244,7 @@ export function createChromeSessionManager(
   async function launchChromeWithCdp(cdpPort: number, profileDir: string, url?: string): Promise<void> {
     // Chrome uses the user-data-dir root "First Run" sentinel to decide
     // whether the branded first-run dialog should appear.
-    await writeFile(join(profileDir, 'First Run'), '').catch(() => {})
+    await writeFile(join(profileDir, 'First Run'), '').catch(() => { })
 
     const args = [
       '-na',
@@ -410,6 +410,7 @@ export function createChromeSessionManager(
 
     endSession() {
       const hadSession = session !== null
+      // eslint-disable-next-line no-void
       void clearSessionState()
       if (hadSession) {
         onSessionLost?.()

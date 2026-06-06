@@ -60,6 +60,7 @@ export function createWebhookOperation(deps: WebhookOperationDeps) {
     logger.withFields({ type: event.type, id: event.id }).log('Webhook event received')
     deps.metrics?.stripeEvents.add(1, { event_type: event.type })
 
+    // eslint-disable-next-line default-case
     switch (event.type) {
       case 'checkout.session.completed': {
         const result = await handleCheckoutSessionCompleted(event.id, event.data.object, deps.fluxService, deps.stripeService, deps.billingService)
@@ -79,6 +80,7 @@ export function createWebhookOperation(deps: WebhookOperationDeps) {
           const userId = event.data.object.metadata?.userId
           if (userId) {
             const fluxAmount = Number(event.data.object.metadata?.fluxAmount)
+            // eslint-disable-next-line no-void
             void deps.productEventService?.track({
               userId,
               feature: 'billing',

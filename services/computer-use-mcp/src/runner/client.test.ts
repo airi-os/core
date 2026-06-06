@@ -79,7 +79,7 @@ describe('remoteRunnerClient', () => {
       expect(recoveredTarget.tainted).toBe(false)
     }
     finally {
-      await client.close().catch(() => {})
+      await client.close().catch(() => { })
     }
   })
 })

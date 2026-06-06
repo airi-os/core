@@ -22,17 +22,17 @@ interface BlockLike { name?: string, boundingBox?: string }
 const HAZARD_BLOCK = /lava|fire|magma/
 
 function isHazardBlock(b: BlockLike | null | undefined): boolean {
-  return !!b?.name && HAZARD_BLOCK.test(b.name)
+  return Boolean(b)?.name && HAZARD_BLOCK.test(b.name)
 }
 
 /** A block the bot can stand ON: full solid, and not a burning hazard. */
 function isStandable(b: BlockLike | null | undefined): boolean {
-  return !!b && b.boundingBox === 'block' && !isHazardBlock(b)
+  return Boolean(b) && b.boundingBox === 'block' && !isHazardBlock(b)
 }
 
 /** A block the bot can occupy (feet/head): non-solid and not lava/fire. */
 function isClear(b: BlockLike | null | undefined): boolean {
-  return !!b && b.boundingBox !== 'block' && !isHazardBlock(b)
+  return Boolean(b) && b.boundingBox !== 'block' && !isHazardBlock(b)
 }
 
 /**
@@ -74,15 +74,15 @@ export function findNearestSafeStand(
   return best
 }
 
-function inLava(bot: any): boolean {
+function inLava(bot: unknown): boolean {
   return Boolean(bot.entity?.isInLava)
 }
 
-function drowning(bot: any): boolean {
+function drowning(bot: unknown): boolean {
   return Boolean(bot.entity?.isInWater) && typeof bot.oxygenLevel === 'number' && bot.oxygenLevel <= LOW_OXYGEN
 }
 
-function inHazard(bot: any): boolean {
+function inHazard(bot: unknown): boolean {
   return inLava(bot) || drowning(bot)
 }
 
@@ -100,7 +100,7 @@ export const escapeHazardBehavior: ReflexBehavior = {
   when: (_ctx, api) => {
     if (escapeInFlight)
       return false
-    return !!api && inHazard(api.bot.bot)
+    return Boolean(api) && inHazard(api.bot.bot)
   },
   run: async (api) => {
     const bot = api.bot.bot
@@ -113,7 +113,10 @@ export const escapeHazardBehavior: ReflexBehavior = {
     try {
       bot.pathfinder?.stop?.()
     }
-    catch {}
+    // eslint-disable-next-line no-empty
+    catch {
+      // noop
+    }
 
     const deadline = Date.now() + ESCAPE_TIMEOUT_MS
     try {
@@ -126,9 +129,12 @@ export const escapeHazardBehavior: ReflexBehavior = {
             ?? { x: pos.x, y: pos.y + 2, z: pos.z })
 
         try {
+          // eslint-disable-next-line no-empty
           await bot.lookAt(new Vec3(target.x + 0.5, target.y, target.z + 0.5), true)
         }
-        catch {}
+        catch {
+          // noop
+        }
         bot.setControlState('sprint', false)
         bot.setControlState('forward', true)
         bot.setControlState('jump', true)

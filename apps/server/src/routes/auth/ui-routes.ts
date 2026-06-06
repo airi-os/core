@@ -63,7 +63,7 @@ export function createAuthUiRoutes(deps: AuthUiRoutesDeps) {
         ? `${deps.env.API_SERVER_URL}/api/auth/oauth2/authorize?${oidcParams.toString()}`
         : '/'
 
-      if (!!provider && ['google', 'github'].includes(provider)) {
+      if (Boolean(provider) && ['google', 'github'].includes(provider)) {
         const socialUrl = `${deps.env.API_SERVER_URL}/api/auth/sign-in/social?provider=${provider}&callbackURL=${encodeURIComponent(callbackURL)}`
         return c.redirect(socialUrl)
       }

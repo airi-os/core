@@ -46,7 +46,7 @@ export function chatCompletions(deps: V1RouteDeps): GatewayCallback<'chat.comple
       requestModel = await deps.configKV.getOrThrow('DEFAULT_CHAT_MODEL')
     }
 
-    const stream = !!body.stream
+    const stream = Boolean(body.stream)
     logger.withFields({
       requestId,
       userId: input.userId,
@@ -54,6 +54,7 @@ export function chatCompletions(deps: V1RouteDeps): GatewayCallback<'chat.comple
       stream,
       messageCount: Array.isArray(body.messages) ? body.messages.length : undefined,
     }).log('chat completion request')
+    // eslint-disable-next-line no-void
     void deps.productEventService.track({
       userId: input.userId,
       feature: 'gen_ai_chat',
@@ -101,6 +102,7 @@ export function chatCompletions(deps: V1RouteDeps): GatewayCallback<'chat.comple
         sessionId: input.sessionId,
       }).fail('Router exhausted or unknown model')
       telemetry.recordMetrics({ model: requestModel, status: 502, type: 'chat', provider: routeCtx.provider, durationMs: Date.now() - startedAt, fluxConsumed: 0 })
+      // eslint-disable-next-line no-void
       void deps.productEventService.track({
         userId: input.userId,
         feature: 'gen_ai_chat',
@@ -140,6 +142,7 @@ export function chatCompletions(deps: V1RouteDeps): GatewayCallback<'chat.comple
       telemetry.failSpan(span, `Gateway ${response.status}`)
       generationTrace.fail(`Gateway ${response.status}`)
       telemetry.recordMetrics({ model: requestModel, status: response.status, type: 'chat', provider: routeCtx.provider, durationMs, fluxConsumed: 0 })
+      // eslint-disable-next-line no-void
       void deps.productEventService.track({
         userId: input.userId,
         feature: 'gen_ai_chat',
@@ -281,6 +284,7 @@ function streamChatCompletion(input: {
         input.telemetry.endSpan(input.span)
         input.generationTrace.fail('Gateway stream interrupted')
         input.telemetry.recordMetrics({ model: input.requestModel, status: input.response.status, type: 'chat', provider: input.routeCtxProvider, durationMs: input.durationMs, fluxConsumed: 0 })
+        // eslint-disable-next-line no-void
         void input.deps.productEventService.track({
           userId: input.userId,
           feature: 'gen_ai_chat',
@@ -368,6 +372,7 @@ function streamChatCompletion(input: {
           promptTokens: usage.promptTokens,
           completionTokens: usage.completionTokens,
         })
+        // eslint-disable-next-line no-void
         void input.deps.productEventService.track({
           userId: input.userId,
           feature: 'gen_ai_chat',
@@ -434,6 +439,7 @@ async function completeNonStreamingChat(input: {
     input.telemetry.failSpan(input.span, 'Failed to parse upstream response body')
     input.generationTrace.fail('Failed to parse upstream response body')
     input.telemetry.recordMetrics({ model: input.requestModel, status: input.response.status, type: 'chat', provider: input.routeCtxProvider, durationMs: input.durationMs, fluxConsumed: 0 })
+    // eslint-disable-next-line no-void
     void input.deps.productEventService.track({
       userId: input.userId,
       feature: 'gen_ai_chat',
@@ -487,6 +493,7 @@ async function completeNonStreamingChat(input: {
     promptTokens: usage.promptTokens,
     completionTokens: usage.completionTokens,
   })
+  // eslint-disable-next-line no-void
   void input.deps.productEventService.track({
     userId: input.userId,
     feature: 'gen_ai_chat',

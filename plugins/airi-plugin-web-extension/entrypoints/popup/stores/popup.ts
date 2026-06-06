@@ -106,6 +106,7 @@ export const usePopupStore = createGlobalState(() => {
     initialized.value = true
     loadStoredSettings()
     watch(form, persistSettings, { deep: true })
+    // eslint-disable-next-line no-void
     void refresh()
     onBackgroundStatus(hydrate)
   }

@@ -328,6 +328,7 @@ export function createVrmPoseApplier(options?: VrmPoseApplyOptions) {
     if (usePole)
       lastTargetPoleWorld[key] = tmpTargetPoleWorld.clone()
     else
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete lastTargetPoleWorld[key]
   }
 

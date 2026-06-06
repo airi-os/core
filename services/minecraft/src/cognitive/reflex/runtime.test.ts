@@ -55,7 +55,7 @@ function createMockBot() {
       heldItem: null,
       time: { timeOfDay: 1000 },
       isRaining: false,
-      players: {} as Record<string, { entity?: any }>,
+      players: {} as Record<string, { entity?: unknown }>,
       pathfinder: {
         setMovements,
         setGoal,
@@ -168,7 +168,7 @@ describe('reflexRuntime async behavior slot locking', () => {
     const runtime = new ReflexRuntime({ logger: createLogger() })
     const { bot } = createMockBot()
 
-    let resolveSlow: () => void = () => {}
+    let resolveSlow: () => void = () => { }
     const slowRun = vi.fn(() => new Promise<void>((resolve) => {
       resolveSlow = resolve
     }))

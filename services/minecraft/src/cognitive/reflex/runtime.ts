@@ -117,6 +117,7 @@ export class ReflexRuntime {
       this.stopAutoFollow(_bot)
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private onExitMode(_mode: ReflexModeId, _bot: MineflayerWithAgents | null): void {
   }
 
@@ -241,6 +242,7 @@ export class ReflexRuntime {
         // only by the deadlock breaker. This was a 50ms cap, which released the slot mid-run
         // and let another reflex preempt a long survival action (e.g. auto-eat). See #1915.
         this.activeBehaviorUntil = now + Math.max(deltaMs, BEHAVIOR_RUN_DEADLOCK_MS)
+        // eslint-disable-next-line no-void
         void (maybePromise as Promise<void>).finally(() => {
           // Behavior ends naturally; next tick can run a new one.
           this.activeBehaviorUntil = null

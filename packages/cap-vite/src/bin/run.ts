@@ -18,6 +18,7 @@ async function main() {
   }
 }
 
+// eslint-disable-next-line no-void
 void main().catch((error) => {
   process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`)
   process.exit(1)

@@ -27,8 +27,11 @@ export async function interpretPhotos(state: BotContext, msg: Message, photos: P
 
     await Promise.all(photoBase64s.map(async (base64, index) => {
       const req = {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         apiKey: env.LLM_VISION_API_KEY!,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         baseURL: env.LLM_VISION_API_BASE_URL!,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         model: env.LLM_VISION_MODEL!,
         messages: message.messages(
           message.system(''
@@ -66,8 +69,11 @@ export async function interpretPhotos(state: BotContext, msg: Message, photos: P
 
       // TODO: implement this for photo searching
       const _embedRes = await embed({
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         baseURL: env.EMBEDDING_API_BASE_URL!,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         apiKey: env.EMBEDDING_API_KEY!,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         model: env.EMBEDDING_MODEL!,
         input: 'Hello, world!',
       })

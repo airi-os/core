@@ -86,6 +86,7 @@ export function createConfigSyncSubscriber(opts: ConfigSyncSubscriberOptions): C
       // cache because no other in-process structure references it.
       if (payload?.key === 'LLM_ROUTER_CONFIG') {
         opts.llmRouter.invalidateConfig()
+        // eslint-disable-next-line no-void
         void opts.llmRouter.invalidateTtsVoicesCache().catch((err) => {
           opts.logger.withError(err).warn('Failed to invalidate tts voices cache on LLM_ROUTER_CONFIG change')
         })
@@ -96,6 +97,7 @@ export function createConfigSyncSubscriber(opts: ConfigSyncSubscriberOptions): C
         return
       }
       if (payload?.key === 'UNSPEECH_UPSTREAM') {
+        // eslint-disable-next-line no-void
         void opts.llmRouter.invalidateTtsVoicesCache().catch((err) => {
           opts.logger.withError(err).warn('Failed to invalidate tts voices cache on UNSPEECH_UPSTREAM change')
         })

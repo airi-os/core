@@ -133,7 +133,7 @@ async function main() {
     }, null, 2))
   }
   finally {
-    await client.close().catch(() => {})
+    await client.close().catch(() => { })
   }
 }
 

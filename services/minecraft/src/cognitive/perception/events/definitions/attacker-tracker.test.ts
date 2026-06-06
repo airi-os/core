@@ -27,8 +27,10 @@ function makeCtx(health: number, entity: Record<string, any>, nearby: Record<str
 }
 
 function primeDamage(entity: Record<string, any>, to: number, nearby: Record<string, any> = {}): any {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   damageTakenEvent.mineflayer.filter!(makeCtx(20, entity, nearby)) // sets lastHealth = 20
   const hurt = makeCtx(to, entity, nearby)
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   expect(damageTakenEvent.mineflayer.filter!(hurt)).toBe(true)
   return hurt
 }

@@ -138,10 +138,12 @@ function navigateToScene(sceneId: string): void {
   }
 
   if (captureRootScenes.value.length > 0 && sceneRouterStore) {
+    // eslint-disable-next-line no-void
     void sceneRouterStore.navigateToCaptureRoot(sceneId)
     return
   }
 
+  // eslint-disable-next-line no-void
   void router.push({ path: sceneId })
 }
 

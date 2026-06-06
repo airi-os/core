@@ -7,6 +7,7 @@ import { toast } from 'vue-sonner'
 const title = useLocalStorage('devtools/notifications/title', '')
 const content = useLocalStorage('devtools/notifications/content', '')
 
+// eslint-disable-next-line consistent-return
 async function sendNotification() {
   const permission = await LocalNotifications.checkPermissions()
   if (permission.display === 'denied') {

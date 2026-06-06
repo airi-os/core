@@ -57,14 +57,14 @@ async function readUpstreamBodySnippet(response: Response, maxBytes = UPSTREAM_B
       chunks.push(value)
       total += value.length
     }
-    reader.cancel().catch(() => {})
+    reader.cancel().catch(() => { })
     if (chunks.length === 0)
       return undefined
     const buf = NodeBuffer.concat(chunks.map(c => NodeBuffer.from(c)))
     return buf.subarray(0, maxBytes).toString('utf8')
   }
   catch {
-    reader.cancel().catch(() => {})
+    reader.cancel().catch(() => { })
     return undefined
   }
 }

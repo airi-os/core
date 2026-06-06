@@ -7,6 +7,7 @@ const originalEnv = { ...process.env }
 afterEach(() => {
   for (const key of Object.keys(process.env)) {
     if (!(key in originalEnv)) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete process.env[key]
     }
   }

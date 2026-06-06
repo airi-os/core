@@ -40,6 +40,7 @@ export function createAudioSpeechWsHandlers(opts: AudioSpeechWsHandlersOptions) 
         sessionState.attachClient(ws)
         // Dial upstream inside the open handler so failure surfaces as a
         // clean close on the client ws rather than a 500 on the upgrade.
+        // eslint-disable-next-line no-void
         void sessionState.dialUpstream()
       },
       onMessage(message, ws) {
@@ -54,7 +55,10 @@ export function createAudioSpeechWsHandlers(opts: AudioSpeechWsHandlersOptions) 
         try {
           ws.close(1011, 'internal_error')
         }
-        catch {}
+        // eslint-disable-next-line no-empty
+        catch {
+          // noop
+        }
       },
     }
   }

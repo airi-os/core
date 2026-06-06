@@ -12,9 +12,10 @@ export function PathFinder(options?: { rangeGoal: number }): MineflayerPlugin {
     created(bot) {
       const logger = useLogger()
 
-      let defaultMove: any
+      let defaultMove: unknown
 
       const handleCome = (commandCtx: Context) => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const username = commandCtx.command!.sender
         if (!username) {
           throw new Error('no player name specified')

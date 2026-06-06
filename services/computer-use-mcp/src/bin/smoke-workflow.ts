@@ -450,7 +450,7 @@ async function main() {
     await testWorkflowBrowseAndAct(clientNoApproval)
   }
   finally {
-    await clientNoApproval.close().catch(() => {})
+    await clientNoApproval.close().catch(() => { })
   }
 
   // Test with approval_mode=actions (per-step approval required).
@@ -463,7 +463,7 @@ async function main() {
     await testWorkflowPauseAndResume(clientWithApproval)
   }
   finally {
-    await clientWithApproval.close().catch(() => {})
+    await clientWithApproval.close().catch(() => { })
   }
 
   console.info('\n╔════════════════════════════════════════════════╗')

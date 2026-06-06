@@ -25,6 +25,7 @@ const emit = defineEmits<{
 }>()
 
 const iconClass = computed(() => {
+  // eslint-disable-next-line default-case
   switch (props.status) {
     case 'loading':
       return 'i-svg-spinners:3-dots-fade'
@@ -40,6 +41,7 @@ const iconClass = computed(() => {
 })
 
 const accentClasses = computed(() => {
+  // eslint-disable-next-line default-case
   switch (props.status) {
     case 'loading':
       return {

@@ -209,7 +209,9 @@ describe('eventBus', () => {
       })
 
       expect(childEvent).toBeDefined()
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(childEvent!.traceId).toBe(parent.traceId)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       expect(childEvent!.parentId).toBe(parent.id)
     })
   })

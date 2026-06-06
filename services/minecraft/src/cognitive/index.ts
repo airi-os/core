@@ -82,6 +82,7 @@ export function CognitiveEngine(options: CognitiveEngineOptions): MineflayerPlug
         brain.init(botWithAgents)
 
         // Ensure perception rules engine is instantiated (Awilix is lazy).
+        // eslint-disable-next-line no-void
         void container.resolve('ruleEngine')
 
         // Initialize perception pipeline (raw events + detectors)

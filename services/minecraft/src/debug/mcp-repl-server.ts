@@ -47,7 +47,7 @@ export class McpReplServer {
     this.mcpServer.resource(
       'brain-state',
       new ResourceTemplate('brain://state', { list: undefined }),
-      async (uri: any) => {
+      (uri: unknown) => {
         const snapshot = this.brain.getDebugSnapshot()
         return {
           contents: [{
@@ -68,7 +68,7 @@ export class McpReplServer {
     this.mcpServer.resource(
       'brain-context',
       new ResourceTemplate('brain://context', { list: undefined }),
-      async (uri: any) => {
+      (uri: unknown) => {
         const snapshot = this.brain.getDebugSnapshot()
         return {
           contents: [{
@@ -83,7 +83,7 @@ export class McpReplServer {
     this.mcpServer.resource(
       'brain-history',
       new ResourceTemplate('brain://history', { list: undefined }),
-      async (uri: any) => {
+      (uri: unknown) => {
         const snapshot = this.brain.getDebugSnapshot()
         return {
           contents: [{
@@ -98,7 +98,7 @@ export class McpReplServer {
     this.mcpServer.resource(
       'brain-logs',
       new ResourceTemplate('brain://logs', { list: undefined }),
-      async (uri: any) => {
+      (uri: unknown) => {
         const snapshot = this.brain.getDebugSnapshot()
         return {
           contents: [{
@@ -183,7 +183,7 @@ export class McpReplServer {
       {
         includeBuiltins: z.boolean().optional(),
       },
-      async ({ includeBuiltins }: { includeBuiltins?: boolean }) => {
+      ({ includeBuiltins }: { includeBuiltins?: boolean }) => {
         const result = this.brain.getReplState({ includeBuiltins: includeBuiltins ?? false })
         return {
           content: [{ type: 'text', text: JSON.stringify(result) }],
@@ -194,7 +194,7 @@ export class McpReplServer {
     this.mcpServer.tool(
       'get_last_prompt',
       {},
-      async () => {
+      () => {
         const result = this.brain.getLastLlmInput()
         if (!result) {
           return {
@@ -222,7 +222,7 @@ export class McpReplServer {
       {
         limit: z.number().optional(),
       },
-      async ({ limit }) => {
+      ({ limit }) => {
         const result = this.brain.getLlmLogs(limit)
         return {
           content: [{ type: 'text', text: JSON.stringify(result) }],
@@ -236,7 +236,7 @@ export class McpReplServer {
         limit: z.number().optional(),
         turnId: z.number().optional(),
       },
-      async ({ limit, turnId }) => {
+      ({ limit, turnId }) => {
         const result = this.brain
           .getLlmTrace(limit, turnId)
         return {
@@ -369,6 +369,7 @@ export class McpReplServer {
 
     this.transport = null
     if (this.streamableTransport) {
+      // eslint-disable-next-line no-void
       void this.streamableTransport.close()
       this.streamableTransport = null
     }

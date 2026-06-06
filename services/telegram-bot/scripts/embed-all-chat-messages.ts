@@ -60,8 +60,11 @@ async function main() {
       const embedPromises = batch.map(async (message) => {
         try {
           const embeddingRes = await embed({
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             baseURL: env.EMBEDDING_API_BASE_URL!,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             apiKey: env.EMBEDDING_API_KEY!,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             model: env.EMBEDDING_MODEL!,
             input: message.content,
           })

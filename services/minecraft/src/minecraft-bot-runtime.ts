@@ -10,8 +10,8 @@ interface BotLifecycleEvents {
 
 interface BotWithLifecycle {
   bot: {
-    on: (event: 'spawn' | 'end' | 'error' | 'kicked', listener: (...args: any[]) => void) => void
-    off?: (event: 'spawn' | 'end' | 'error' | 'kicked', listener: (...args: any[]) => void) => void
+    on: (event: 'spawn' | 'end' | 'error' | 'kicked', listener: (...args: unknown[]) => void) => void
+    off?: (event: 'spawn' | 'end' | 'error' | 'kicked', listener: (...args: unknown[]) => void) => void
   }
   stop: () => Promise<void>
 }

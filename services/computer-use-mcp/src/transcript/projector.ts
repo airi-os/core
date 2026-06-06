@@ -90,6 +90,7 @@ export function projectTranscript(
   const textLikeBlocks: TranscriptBlock[] = []
 
   for (const block of candidateBlocks) {
+    // eslint-disable-next-line default-case
     switch (block.kind) {
       case 'tool_interaction':
         toolBlocks.push(block)
@@ -145,6 +146,7 @@ export function projectTranscript(
   const messages: TranscriptProjectedMessage[] = []
   for (const item of emitItems) {
     const block = item.block
+    // eslint-disable-next-line default-case
     switch (block.kind) {
       case 'user':
       case 'system':

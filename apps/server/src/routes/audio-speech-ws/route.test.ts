@@ -61,7 +61,10 @@ async function startMockUpstream(scriptedResponses: MockUpstream['scriptedRespon
           if (ev.event === 'finish' || ev.event === 'cancel')
             triggerReplay = true
         }
-        catch {}
+        // eslint-disable-next-line no-empty
+        catch {
+          // noop
+        }
       }
 
       // For tests that send NO frames (pre-flight rejection cases) the

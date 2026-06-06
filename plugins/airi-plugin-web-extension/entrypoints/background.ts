@@ -81,6 +81,7 @@ async function init() {
 }
 
 function handleContentMessage(message: ContentToBackgroundMessage) {
+  // eslint-disable-next-line default-case
   switch (message.type) {
     case 'content:page': {
       const payload = {
@@ -137,7 +138,7 @@ export default defineBackground(() => {
     const tabs = await browser.tabs.query({ active: true, currentWindow: true })
     const tab = tabs[0]
     if (tab?.id != null) {
-      await browser.tabs.sendMessage(tab.id, message).catch(() => {})
+      await browser.tabs.sendMessage(tab.id, message).catch(() => { })
     }
 
     return toStatus(state, settings)
@@ -149,6 +150,7 @@ export default defineBackground(() => {
     return toStatus(state, settings)
   })
 
+  // eslint-disable-next-line no-void
   void init()
 
   browser.runtime.onMessage.addListener((message: unknown) => {
@@ -165,6 +167,7 @@ export default defineBackground(() => {
     if (changes[STORAGE_KEY]) {
       const next = changes[STORAGE_KEY].newValue as ExtensionSettings | undefined
       settings = { ...DEFAULT_SETTINGS, ...next }
+      // eslint-disable-next-line no-void
       void refreshClient()
       emitStatus()
     }

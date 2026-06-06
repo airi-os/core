@@ -143,6 +143,7 @@ watch(() => form.ttsModelId, (next) => {
   if (!form.model.trim() || form.model === oldDerived.model)
     form.model = nextDerived.model
   previousDerived.value = nextDerived
+  // eslint-disable-next-line no-void
   void loadVoices(next, { autoPick: true })
 })
 
@@ -201,6 +202,7 @@ function fillSelectedPack() {
   const pack = selectedPack.value
   if (!pack) {
     toast.error('Voice Pack not found')
+    // eslint-disable-next-line no-void
     void router.replace('/voice-packs')
     return
   }

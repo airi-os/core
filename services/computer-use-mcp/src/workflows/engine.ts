@@ -624,6 +624,7 @@ export async function executeWorkflow(params: {
     // ------------------------------------------------------------------
     const prepAdvisories = executionAdvisories
       .filter(a => PREP_TOOL_POLICY[a.kind])
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       .sort((a, b) => (PREP_TOOL_POLICY[a.kind]!.priority) - (PREP_TOOL_POLICY[b.kind]!.priority))
 
     let prepFailure: { toolName: string, message: string } | undefined
@@ -631,6 +632,7 @@ export async function executeWorkflow(params: {
     let rerouteAdvisory: StrategyAdvisory | undefined
 
     for (const prepAdv of prepAdvisories) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const policy = PREP_TOOL_POLICY[prepAdv.kind]!
       const prepToolName = prepAdv.suggestedToolName ?? `prep_${prepAdv.kind}`
 

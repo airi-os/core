@@ -35,8 +35,11 @@ export async function recordMessage(botInfo: UserFromGetMe, message: Message) {
   }
   else {
     embedding = await embed({
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       baseURL: env.EMBEDDING_API_BASE_URL!,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       apiKey: env.EMBEDDING_API_KEY!,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       model: env.EMBEDDING_MODEL!,
       input: text,
     })
@@ -49,7 +52,7 @@ export async function recordMessage(botInfo: UserFromGetMe, message: Message) {
     from_name: message.from.first_name,
     in_chat_id: message.chat.id.toString(),
     content: text,
-    is_reply: !!message.reply_to_message,
+    is_reply: Boolean(message.reply_to_message),
     reply_to_name: replyToName === botInfo.first_name ? 'Yourself' : replyToName,
     reply_to_id: message.reply_to_message?.message_id.toString() || '',
   }

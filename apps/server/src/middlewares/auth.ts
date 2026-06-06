@@ -14,6 +14,7 @@ type AuthInstance = ReturnType<typeof createAuth>
  * It does not block unauthorized requests.
  */
 export function sessionMiddleware(auth: AuthInstance, env: Env): MiddlewareHandler<HonoEnv> {
+  // eslint-disable-next-line consistent-return
   return async (c, next) => {
     // NOTICE: auth routes handle session lookup inside better-auth itself,
     // and the ui-server-auth SPA bundle (HTML/JS/CSS + SPA routes like

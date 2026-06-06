@@ -71,8 +71,10 @@ describe('damage_taken cause inference', () => {
   // Prime lastHealth to 20, then drop to `to`, returning the dropped-health ctx ready for extract().
   function primeDamage(entity: Record<string, any>, to: number, nearby: Record<string, any> = {}): any {
     const full = makeCtx(20, entity, nearby)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     damageTakenEvent.mineflayer.filter!(full) // sets lastHealth = 20, returns false
     const hurt = makeCtx(to, entity, nearby)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(damageTakenEvent.mineflayer.filter!(hurt)).toBe(true)
     return hurt
   }

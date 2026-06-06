@@ -171,7 +171,7 @@ async function handleSubmit() {
       // — the tts capability is always emitted but is inert without one.
       trackCharacterCreated({
         character_type: 'custom',
-        voice_enabled: !!form.ttsVoiceId,
+        voice_enabled: Boolean(form.ttsVoiceId),
       })
     }
     emit('submit')

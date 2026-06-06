@@ -279,7 +279,7 @@ async function main() {
     console.info('╚══════════════════════════════════════════════════════════╝')
   }
   finally {
-    await client.close().catch(() => {})
+    await client.close().catch(() => { })
   }
 }
 

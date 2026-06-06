@@ -23,7 +23,7 @@ import { createLlmRouterService } from '../router'
  * checker is happy without spinning a real client.
  */
 function makeRedisStub(): Redis {
-  async function* emptyScan(): AsyncGenerator<string[]> {}
+  async function* emptyScan(): AsyncGenerator<string[]> { }
   return {
     get: vi.fn(async () => null),
     set: vi.fn(async () => 'OK'),
@@ -65,8 +65,8 @@ function makeMetrics(): GatewayMetrics {
 function makeLedger(overrides: Partial<ConcurrencyLedger> = {}): ConcurrencyLedger {
   return {
     tryAcquire: vi.fn(async () => true),
-    release: vi.fn(async () => {}),
-    markSaturated: vi.fn(async () => {}),
+    release: vi.fn(async () => { }),
+    markSaturated: vi.fn(async () => { }),
     isSaturated: vi.fn(async () => false),
     currentInflight: vi.fn(async () => 0),
     snapshot: vi.fn(async () => []),

@@ -41,6 +41,7 @@ function formatSystemMessageContent(content) {
 }
 
 function throttle(func, wait) {
+  // eslint-disable-next-line no-undef-init -- Intentionally uninitialized for closure pattern
   let timeout
   return function executedFunction(...args) {
     const later = () => {
@@ -165,6 +166,7 @@ class DebugClient {
   routeEvent(event) {
     this.emit(event.type, event.payload)
   }
+// eslint-disable-next-line class-methods-use-this
 
   updateConnectionStatus(connected) {
     const dot = document.getElementById('connection-status')
@@ -712,6 +714,7 @@ class ConversationPanel {
     }
     return parts.join('')
   }
+// eslint-disable-next-line class-methods-use-this
 
   groupIntoTurns(messages) {
     const turns = []
@@ -769,6 +772,7 @@ class ConversationPanel {
   }
 
   // --- Event summary helpers ---
+// eslint-disable-next-line class-methods-use-this
 
   summarizeEvent(section) {
     const text = section.text
@@ -819,6 +823,7 @@ class ConversationPanel {
     }
     return `<div class="cv-user">${cards.join('')}</div>`
   }
+// eslint-disable-next-line class-methods-use-this
 
   renderUserSection(section, turnNum) {
     const id = `cv-s-${turnNum}-${section.tag}-${Math.random().toString(36).slice(2, 6)}`
@@ -869,6 +874,7 @@ class ConversationPanel {
   }
 
   // --- Parsed assistant message rendering ---
+// eslint-disable-next-line class-methods-use-this
 
   renderParsedAssistantMessage(msg, turnNum) {
     const reasoning = msg.reasoning || ''
@@ -901,6 +907,7 @@ class ConversationPanel {
   }
 
   // --- System message ---
+// eslint-disable-next-line class-methods-use-this
 
   renderSystemMessage(msg) {
     const id = `cv-sys-${Math.random().toString(36).slice(2, 6)}`
@@ -1028,6 +1035,7 @@ class ToolsPanel {
       </div>
     `
   }
+// eslint-disable-next-line class-methods-use-this
 
   renderParamInput(param) {
     if (param.type === 'boolean') {
@@ -1140,6 +1148,7 @@ class ToolsPanel {
       }, 3000)
     }
   }
+// eslint-disable-next-line class-methods-use-this
 
   updateCardState(toolName, state) {
     const card = document.getElementById(`tool-card-${toolName}`)
@@ -1162,6 +1171,7 @@ class ToolsPanel {
       }
     }
   }
+// eslint-disable-next-line class-methods-use-this
 
   showResult(toolName, data, isError) {
     const resultEl = document.getElementById(`result-${toolName}`)
@@ -1178,6 +1188,7 @@ class ToolsPanel {
       <div class="result-content">${escapeHtml(content || 'No result')}</div>
     `
   }
+// eslint-disable-next-line class-methods-use-this
 
   hideResult(toolName) {
     const resultEl = document.getElementById(`result-${toolName}`)
@@ -1474,6 +1485,7 @@ class TimelinePanel {
     }
     return true
   }
+// eslint-disable-next-line class-methods-use-this
 
   renderEvent(event) {
     const time = new Date(event.timestamp).toLocaleTimeString('en-US', {
@@ -1542,6 +1554,7 @@ class TimelinePanel {
       el.classList.remove('selected')
     })
   }
+// eslint-disable-next-line class-methods-use-this
 
   buildEventTree(events) {
     const eventMap = new Map()
@@ -1670,6 +1683,7 @@ class LayoutManager {
     document.body.style.cursor = ''
     document.body.style.userSelect = ''
   }
+// eslint-disable-next-line class-methods-use-this
 
   setupMaximizeButtons() {
     document.querySelectorAll('.maximize-btn').forEach((btn) => {
@@ -1742,6 +1756,7 @@ class DebugApp {
     // Connect
     this.client.connect()
   }
+// eslint-disable-next-line class-methods-use-this
 
   setupTabs() {
     const tabs = Array.from(document.querySelectorAll('.tab-button'))

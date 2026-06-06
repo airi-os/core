@@ -30,6 +30,7 @@ export class OpusDecoder extends Transform {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   _flush(callback: (...args: any[]) => void) {
     callback()
   }

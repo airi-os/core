@@ -1,5 +1,5 @@
 export interface TwitterService {
-  [key: string]: (...args: any[]) => any
+  [key: string]: (...args: unknown[]) => any
 }
 
 export interface TwitterServices {

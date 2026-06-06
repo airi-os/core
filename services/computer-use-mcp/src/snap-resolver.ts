@@ -170,10 +170,12 @@ export function resolveSnapByCandidate(
 /**
  * Check if a candidate's source is flagged as stale in the snapshot.
  */
+// eslint-disable-next-line consistent-return
 export function isStaleCandidateSource(
   source: TargetSource,
   snapshot: DesktopGroundingSnapshot,
 ): boolean {
+  // eslint-disable-next-line default-case
   switch (source) {
     case 'chrome_dom':
       return snapshot.staleFlags.chromeSemantic

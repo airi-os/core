@@ -15,7 +15,9 @@ async function run() {
   try {
     await rm(join(dir, 'src', 'generated'), { force: true })
   }
+  // eslint-disable-next-line no-empty
   catch {
+    // noop
   }
 
   await mkdir(join(dir, 'src', 'generated'), { recursive: true })

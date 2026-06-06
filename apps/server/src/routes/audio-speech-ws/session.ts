@@ -105,6 +105,7 @@ export function createSessionState(
   }
 
   async function dialUpstream() {
+    // eslint-disable-next-line no-void
     void opts.productEventService.track({
       userId,
       feature: 'tts',
@@ -216,6 +217,7 @@ export function createSessionState(
       log.withError(err).withFields({ userId }).warn('upstream ws error')
       span.recordException(err)
       span.setStatus({ code: SpanStatusCode.ERROR, message: err.message })
+      // eslint-disable-next-line no-void
       void opts.productEventService.track({
         userId,
         feature: 'tts',
@@ -236,7 +238,10 @@ export function createSessionState(
           message: err.message,
         }))
       }
-      catch {}
+      // eslint-disable-next-line no-empty
+      catch {
+        // noop
+      }
       finalize()
     })
   }
@@ -272,9 +277,12 @@ export function createSessionState(
     catch (err) {
       log.withError(err).warn('failed to forward client frame to upstream')
       try {
+        // eslint-disable-next-line no-empty
         ws.close(1011, 'upstream_send_failed')
       }
-      catch {}
+      catch {
+        // noop
+      }
     }
   }
 
@@ -283,11 +291,14 @@ export function createSessionState(
       return
     // Client dropped — best-effort cancel upstream so the upstream session
     // releases its resources. We do not wait for SessionCanceled ack.
+    // eslint-disable-next-line no-empty
     if (upstreamWs && upstreamReady) {
       try {
         upstreamWs.send(JSON.stringify({ event: 'cancel' }))
       }
-      catch {}
+      catch {
+        // noop
+      }
     }
     finalize()
   }
@@ -321,6 +332,7 @@ export function createSessionState(
     }
     catch {
       // unspeech only ever sends JSON on text frames per the v1 spec; a parse
+      // eslint-disable-next-line default-case
       // failure here is a bug in unspeech or a wire corruption. Don't kill
       // the session over it — the client gets the raw frame regardless.
     }
@@ -328,6 +340,7 @@ export function createSessionState(
 
   function handleUpstreamControlEvent(evt: { event?: string, payload?: Record<string, unknown> }) {
     switch (evt.event) {
+      // eslint-disable-next-line no-void
       case 'session.finished': {
         // Pull authoritative usage from upstream when present. Falls back to
         // the client-text-frame estimate accumulated in handleClientMessage.
@@ -415,6 +428,7 @@ export function createSessionState(
         status: 200,
         durationMs,
         fluxConsumed,
+      // eslint-disable-next-line no-void
       })
     }
     catch (err) {
@@ -440,17 +454,24 @@ export function createSessionState(
   }
 
   function finalize() {
+    // eslint-disable-next-line no-empty
     if (closed)
       return
     closed = true
     try {
+      // eslint-disable-next-line no-empty
       upstreamWs?.close()
     }
-    catch {}
+    catch {
+      // noop
+    }
     try {
       clientWs?.close()
     }
-    catch {}
+    // eslint-disable-next-line no-void
+    catch {
+      // noop
+    }
     span.end()
   }
 
@@ -466,21 +487,28 @@ export function createSessionState(
       source: analytics.source,
       model: modelLabel,
       reason,
+      // eslint-disable-next-line no-empty
       metadata: {
         close_code: code,
         duration_ms: Date.now() - startedAt,
         trigger: analytics.trigger,
+      // eslint-disable-next-line no-empty
       },
     })
     if (clientWs) {
       try {
         clientWs.send(JSON.stringify({ event: 'error', code: reason, message: reason }))
       }
-      catch {}
+      catch {
+        // noop
+      }
+      // eslint-disable-next-line no-void
       try {
         clientWs.close(code, reason)
       }
-      catch {}
+      catch {
+        // noop
+      }
     }
     closed = true
     span.end()
@@ -495,10 +523,12 @@ export function createSessionState(
       action: 'speech_blocked',
       status: 'blocked',
       source: analytics.source,
+      // eslint-disable-next-line no-empty
       model: modelLabel,
       reason: 'insufficient_balance',
       metadata: {
         balance_state: 'insufficient',
+        // eslint-disable-next-line no-empty
         billing_units: STREAMING_PREFLIGHT_CHARS_ESTIMATE,
         close_code: code,
         duration_ms: Date.now() - startedAt,
@@ -509,11 +539,15 @@ export function createSessionState(
       try {
         clientWs.send(JSON.stringify({ event: 'error', code: reason, message: reason }))
       }
-      catch {}
+      catch {
+        // noop
+      }
       try {
         clientWs.close(code, reason)
       }
-      catch {}
+      catch {
+        // noop
+      }
     }
     closed = true
     span.end()

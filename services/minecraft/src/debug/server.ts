@@ -401,10 +401,12 @@ export class DebugServer {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private generateClientId(): string {
     return `client-${Date.now()}-${nanoid(10)}`
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private handleLogsApi(req: IncomingMessage, res: http.ServerResponse): void {
     const url = new URL(req.url || '/api/logs', 'http://localhost')
     const logsDir = path.join(process.cwd(), 'logs')

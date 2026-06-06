@@ -35,18 +35,18 @@ export class Mineflayer extends EventEmitter<EventHandlers> {
   public bot: Bot
   public username: string
   public health: Health = new Health()
-  public ready: boolean = false
+  public ready = false
   public components: Components = new Components()
   public status: Status = new Status()
   public memory: Memory = new Memory()
 
-  public isCreative: boolean = false
-  public allowCheats: boolean = false
+  public isCreative = false
+  public allowCheats = false
 
   private respawnRequestedAt: number | null = null
   private respawnTimer: ReturnType<typeof setTimeout> | null = null
-  private isStopping: boolean = false
-  private hasSpawnedAtLeastOnce: boolean = false
+  private isStopping = false
+  private hasSpawnedAtLeastOnce = false
   private pluginSetupPromise: Promise<void> = Promise.resolve()
 
   private options: MineflayerOptions
@@ -92,25 +92,38 @@ export class Mineflayer extends EventEmitter<EventHandlers> {
     try {
       ;(this.bot).pathfinder?.stop?.()
     }
-    catch { }
+    // eslint-disable-next-line no-empty
+    catch {
+      // noop
+    }
 
     try {
+      // eslint-disable-next-line no-empty
       ;(this.bot).pvp?.stop?.()
     }
-    catch { }
+    catch {
+      // noop
+    }
+// eslint-disable-next-line no-empty
 
     try {
       ;(this.bot).stopDigging?.()
     }
-    catch { }
+    catch {
+      // eslint-disable-next-line no-empty
+      // noop
+    }
 
     try {
       ;(this.bot).deactivateItem?.()
     }
-    catch { }
+    catch {
+      // noop
+    }
 
     try {
       if (typeof this.bot.clearControlStates === 'function') {
+        // eslint-disable-next-line no-empty
         this.bot.clearControlStates()
       }
       else {
@@ -119,7 +132,9 @@ export class Mineflayer extends EventEmitter<EventHandlers> {
         })
       }
     }
-    catch { }
+    catch {
+      // noop
+    }
 
     this.logger.withFields({ reason }).log('Interrupted')
     this.emit('interrupt')
@@ -168,6 +183,7 @@ export class Mineflayer extends EventEmitter<EventHandlers> {
       this.respawnTimer = null
     }
 
+    // eslint-disable-next-line no-empty
     this.ticker.stop()
 
     await this.pluginRuntime.beforeCleanup()
@@ -178,7 +194,10 @@ export class Mineflayer extends EventEmitter<EventHandlers> {
     try {
       this.bot.quit()
     }
-    catch { }
+    // eslint-disable-next-line no-void
+    catch {
+      // noop
+    }
 
     this.removeAllListeners()
   }
@@ -195,6 +214,7 @@ export class Mineflayer extends EventEmitter<EventHandlers> {
     this.pluginSetupPromise = setupPromise
   }
 
+  // eslint-disable-next-line no-empty
   private async replaceBot(): Promise<void> {
     this.ready = false
 
@@ -207,13 +227,16 @@ export class Mineflayer extends EventEmitter<EventHandlers> {
     try {
       previousBot.quit()
     }
-    catch { }
+    catch {
+      // noop
+    }
 
     const nextBot = mineflayer.createBot(this.options.botConfig)
     this.activateBot(nextBot)
   }
 
   private setupBotEventHandlers(bot: Bot): void {
+    // eslint-disable-next-line no-void
     let disconnectForwarded = false
     let hasSpawnedForCurrentBot = false
 
@@ -280,6 +303,7 @@ export class Mineflayer extends EventEmitter<EventHandlers> {
       disconnectForwarded = false
       this.ready = true
       this.respawnRequestedAt = null
+// eslint-disable-next-line no-void
 
       if (this.respawnTimer) {
         clearTimeout(this.respawnTimer)

@@ -14,6 +14,7 @@ export class ChatMessageHandler {
   constructor(private readonly botUsername: string) {}
 
   // Creates a new chat message context with validation
+  // eslint-disable-next-line class-methods-use-this
   createMessageContext(entity: Entity | null, username: string, content: string): ChatMessage {
     return {
       sender: {
@@ -30,6 +31,7 @@ export class ChatMessageHandler {
   }
 
   // Checks if a message is a command
+  // eslint-disable-next-line class-methods-use-this
   isCommand(content: string): boolean {
     return content.startsWith('#')
   }

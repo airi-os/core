@@ -49,12 +49,12 @@ function createDeps(llmText: string) {
   return {
     eventBus: { subscribe: vi.fn() },
     llmAgent: {
-      callLLM: vi.fn(async () => ({ text: llmText, reasoning: '', usage: {} })),
+      callLLM: vi.fn(() => ({ text: llmText, reasoning: '', usage: {} })),
     },
     logger,
     taskExecutor: {
       getAvailableActions: vi.fn(() => []),
-      executeActionWithResult: vi.fn(async () => 'ok'),
+      executeActionWithResult: vi.fn(() => 'ok'),
       on: vi.fn(),
     },
     reflexManager: {
@@ -89,7 +89,7 @@ function createAsyncControlAction(name: string = 'goToPlayer') {
       player_name: z.string(),
       closeness: z.number(),
     }),
-    perform: () => async () => 'ok',
+    perform: () => () => 'ok',
   } as any
 }
 
@@ -395,7 +395,7 @@ inv;
   it('clears error-burst guard when giveUp and chat both succeed in one turn', async () => {
     const deps: any = createDeps('await giveUp({ reason: "stuck" }); await chat("I got stuck after repeated errors.")')
     deps.taskExecutor.getAvailableActions = vi.fn(() => [createGiveUpAction(), createChatAction()])
-    deps.taskExecutor.executeActionWithResult = vi.fn(async (action: any) => action.tool === 'giveUp' ? 'gave up' : 'chat sent')
+    deps.taskExecutor.executeActionWithResult = vi.fn((action: any) => action.tool === 'giveUp' ? 'gave up' : 'chat sent')
 
     const brain: any = new Brain(deps)
     brain.errorBurstGuardState = {
@@ -596,9 +596,9 @@ describe('brain queue coalescing', () => {
 describe('brain control action queue', () => {
   it('does not block turn completion while control action executes in worker', async () => {
     const deps: any = createDeps('await goToPlayer({ player_name: "Alex", closeness: 2 })')
-    const deferred = new Promise<unknown>(() => {})
+    const deferred = new Promise<unknown>(() => { })
     deps.taskExecutor.getAvailableActions = vi.fn(() => [createAsyncControlAction('goToPlayer')])
-    deps.taskExecutor.executeActionWithResult = vi.fn(async (action: any) => {
+    deps.taskExecutor.executeActionWithResult = vi.fn((action: any) => {
       if (action.tool === 'goToPlayer')
         return deferred
       return 'ok'
@@ -649,7 +649,7 @@ describe('brain control action queue', () => {
     })
 
     const brain: any = new Brain(deps)
-    const enqueueSpy = vi.fn(async () => undefined)
+    const enqueueSpy = vi.fn(() => undefined)
     brain.enqueueEvent = enqueueSpy
 
     const bot = {

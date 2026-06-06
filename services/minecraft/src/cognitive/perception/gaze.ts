@@ -133,6 +133,7 @@ export function computeNearbyPlayerGaze(
     .map(({ p, dist }) => {
       const { lookPoint, hitBlock } = rayTraceBlockFromEntity(bot, p, { maxDistance: options?.maxDistance ?? 32 })
       return {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         playerName: p.username!,
         distanceToSelf: dist,
         lookPoint,

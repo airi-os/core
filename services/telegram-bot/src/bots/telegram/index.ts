@@ -20,6 +20,7 @@ import { readMessage } from './agent/actions/read-message'
 import { sendMessage } from './agent/actions/send-message'
 // import { shouldInterruptProcessing } from './agent/interruption'
 
+// eslint-disable-next-line consistent-return
 async function dispatchAction(ctx: BotContext, action: Action, abortController: AbortController, chatCtx?: ChatContext) {
   // If action generation failed, don't proceed with further processing
   if (!action || !action.action) {
@@ -29,6 +30,7 @@ async function dispatchAction(ctx: BotContext, action: Action, abortController: 
       return () => handleLoopStep(ctx, chatCtx)
     }
     else {
+      // eslint-disable-next-line consistent-return
       return
     }
   }
@@ -55,6 +57,7 @@ async function dispatchAction(ctx: BotContext, action: Action, abortController: 
         }
       }
 
+      // eslint-disable-next-line consistent-return
       return
     }
     case 'send_sticker':
@@ -106,6 +109,7 @@ async function dispatchAction(ctx: BotContext, action: Action, abortController: 
       }
       if (unreadMessagesForThisChat.length === 0) {
         ctx.logger.withField('action', action).log(`No unread messages for group - deleting`)
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete ctx.unreadMessages[action.chatId]
         break
       }
@@ -127,6 +131,7 @@ async function dispatchAction(ctx: BotContext, action: Action, abortController: 
         return () => handleLoopStep(ctx, chatCtx)
       }
       else {
+        // eslint-disable-next-line consistent-return
         return
       }
     }
@@ -135,6 +140,7 @@ async function dispatchAction(ctx: BotContext, action: Action, abortController: 
         chatCtx.actions.push({ action, result: `AIRI System: List of chats:${(await listJoinedChats()).map(chat => `ID:${chat.chat_id}, Name:${chat.chat_name}`).join('\n')}` })
       }
 
+      // eslint-disable-next-line consistent-return
       return
     case 'send_message':
     {
@@ -148,6 +154,7 @@ async function dispatchAction(ctx: BotContext, action: Action, abortController: 
         chatCtx.actions.push({ action, result: 'AIRI System: Acknowledged, will now continue until next tick.' })
       }
 
+      // eslint-disable-next-line consistent-return
       return
     case 'break':
       if (chatCtx) {
@@ -156,6 +163,7 @@ async function dispatchAction(ctx: BotContext, action: Action, abortController: 
         chatCtx.actions.push({ action, result: 'AIRI System: Acknowledged, will now break, and clear out all existing memories, messages, actions. Left only this one.' })
       }
 
+      // eslint-disable-next-line consistent-return
       return
     case 'sleep':
       await sleep(30 * 1000)
@@ -171,7 +179,8 @@ async function dispatchAction(ctx: BotContext, action: Action, abortController: 
   }
 }
 
-async function handleLoopStep(ctx: BotContext, chatCtx: ChatContext, incomingMessage?: Message): Promise<() => Promise<any> | undefined> {
+// eslint-disable-next-line consistent-return
+async function handleLoopStep(ctx: BotContext, chatCtx: ChatContext, incomingMessage?: Message): Promise<() => Promise<unknown> | undefined> {
   ctx.currentProcessingStartTime = Date.now()
 
   if (chatCtx?.currentAbortController) {
@@ -270,6 +279,7 @@ async function handleLoopStep(ctx: BotContext, chatCtx: ChatContext, incomingMes
   catch (err) {
     if (err.name === 'AbortError') {
       ctx.logger.log('Operation was aborted due to interruption')
+      // eslint-disable-next-line consistent-return
       return
     }
 
@@ -284,7 +294,7 @@ async function handleLoopStep(ctx: BotContext, chatCtx: ChatContext, incomingMes
   }
 }
 
-async function isChatIdBotAdmin(fromId: number) {
+function isChatIdBotAdmin(fromId: number) {
   if (!env.ADMIN_USER_IDS) {
     return false
   }
@@ -331,7 +341,7 @@ async function loopIterationPeriodicWithNoChats(ctx: BotContext) {
 }
 
 function loopPeriodic(botCtx: BotContext) {
-  setTimeout(async () => {
+  setTimeout(() => {
     try {
       loopIterationPeriodicForExistingChat(botCtx)
       loopIterationPeriodicWithNoChats(botCtx)
@@ -390,6 +400,7 @@ async function onMessageArrival(botContext: BotContext, chatCtx: ChatContext) {
       }
 
       if (nextMsg.status === 'ready') {
+        // eslint-disable-next-line default-case
         switch (nextMsg.message.chat.type) {
           case 'private':
             await recordJoinedChat(nextMsg.message.chat.id.toString(), `${nextMsg.message.from.first_name} ${nextMsg.message.from.last_name}`)
@@ -438,6 +449,7 @@ async function onMessageArrival(botContext: BotContext, chatCtx: ChatContext) {
 
 function ensureChatContext(botCtx: BotContext, chatId: string): ChatContext {
   if (botCtx.chats.has(chatId)) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return botCtx.chats.get(chatId)!
   }
 
@@ -456,6 +468,7 @@ function ensureChatContext(botCtx: BotContext, chatId: string): ChatContext {
 export async function startTelegramBot() {
   const log = useLogg('Bot').useGlobalConfig()
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const telegramBot = new Bot<ExtendedContext>(env.TELEGRAM_BOT_TOKEN!)
   telegramBot.errorHandler = async err => log.withError(err).log('Error occurred')
 
@@ -488,7 +501,7 @@ export async function startTelegramBot() {
     await ctx.reply('Sticker pack added.')
   })
 
-  telegramBot.on('message:sticker', async (ctx) => {
+  telegramBot.on('message:sticker', (ctx) => {
     const messageId = `${ctx.message.chat.id}-${ctx.message.message_id}`
     if (!botCtx.processedIds.has(messageId)) {
       botCtx.processedIds.add(messageId)
@@ -502,7 +515,7 @@ export async function startTelegramBot() {
     onMessageArrival(botCtx, chatCtx)
   })
 
-  telegramBot.on('message:photo', async (ctx) => {
+  telegramBot.on('message:photo', (ctx) => {
     const messageId = `${ctx.message.chat.id}-${ctx.message.message_id}`
     if (!botCtx.processedIds.has(messageId)) {
       botCtx.processedIds.add(messageId)
@@ -516,7 +529,7 @@ export async function startTelegramBot() {
     onMessageArrival(botCtx, chatCtx)
   })
 
-  telegramBot.on('message:text', async (ctx) => {
+  telegramBot.on('message:text', (ctx) => {
     const messageId = `${ctx.message.chat.id}-${ctx.message.message_id}`
     if (!botCtx.processedIds.has(messageId)) {
       botCtx.processedIds.add(messageId)

@@ -25,7 +25,7 @@ type MockResult = Promise<{ exitCode: number, stderr: string, stdout: string }> 
 
 class MockWatcher extends EventEmitter {
   add = vi.fn()
-  unwatch = vi.fn(async () => {})
+  unwatch = vi.fn(async () => { })
 }
 
 class MockHttpServer extends EventEmitter {}

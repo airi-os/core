@@ -43,7 +43,7 @@ export async function openSettingsFromControlsIsland(page: Page): Promise<void> 
   catch {
     // NOTICE: The island can report ready while still collapsed on slower frames.
     // Expand once and retry settings click to reduce flakiness during capture.
-    await expandControlsIsland(page).catch(() => {})
+    await expandControlsIsland(page).catch(() => { })
     await clickControlButtonByIcon(page, 'i-solar:settings-minimalistic-outline')
   }
 }

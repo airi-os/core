@@ -5,7 +5,7 @@ import { actionsList } from './llm-actions'
 
 vi.mock('../../skills/actions/world-interactions', () => ({
   activateNearestBlock: vi.fn(),
-  breakBlockAt: vi.fn(async () => true),
+  breakBlockAt: vi.fn(() => true),
   placeBlock: vi.fn(),
 }))
 
@@ -62,10 +62,11 @@ describe('llm-actions mineBlockAt', () => {
     expect(breakBlockAt).not.toHaveBeenCalled()
   })
 
-  it('exposes skip tool with stable return value', async () => {
+  it('exposes skip tool with stable return value', () => {
     const skipAction = actionsList.find(item => item.name === 'skip')
     expect(skipAction).toBeDefined()
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const perform = skipAction!.perform({} as any)
     expect(perform()).toBe('Skipped turn')
   })

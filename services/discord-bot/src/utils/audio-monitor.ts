@@ -11,7 +11,7 @@ export class AudioMonitor {
   private buffers: Buffer[] = []
   private maxSize: number
   private lastFlagged: number = -1
-  private ended: boolean = false
+  private ended = false
   private logger = useLogg('AudioMonitor').useGlobalConfig()
 
   constructor(

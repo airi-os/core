@@ -285,7 +285,9 @@ export function buildUnspeechSlice(input: UnspeechSliceInput, envelope: Envelope
  * - The service main path needs to turn an admin-supplied slice into a
  *   ready-to-write configKV fragment. Tests dispatch the same way.
  */
+// eslint-disable-next-line consistent-return
 export function buildSlice(input: SliceInput, envelope: EnvelopeCrypto): BuiltSlice {
+  // eslint-disable-next-line default-case
   switch (input.kind) {
     case 'openrouter':
       return buildOpenRouterSlice(input, envelope)

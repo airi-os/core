@@ -40,18 +40,23 @@ export async function readMessage(
     logger.withField('number_of_last_n_messages', lastNMessages.length).log('Successfully found last N messages')
 
     const unreadMessagesEmbeddingPromises = unreadMessages
-      .filter(msg => !!msg.text || !!msg.caption)
+      .filter(msg => Boolean(msg.text) || Boolean(msg.caption))
       .map(async (msg: Message) => {
         const embeddingResult = await tracer.startActiveSpan('llm.embed.embed_with_retry', async (span) => {
           const res = await withRetry(async () => {
             return await tracer.startActiveSpan('llm.embed.embed', async (span) => {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               span.setAttribute('llm.embed.model', env.EMBEDDING_MODEL!)
               span.setAttribute('llm.embed.messages', msg.text || msg.caption || '')
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               span.setAttribute('llm.provider.api_base_url', env.EMBEDDING_API_BASE_URL!)
 
               const res = await embed({
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 baseURL: env.EMBEDDING_API_BASE_URL!,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 apiKey: env.EMBEDDING_API_KEY!,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 model: env.EMBEDDING_MODEL!,
                 input: msg.text || msg.caption || '',
                 abortSignal: abortController.signal,

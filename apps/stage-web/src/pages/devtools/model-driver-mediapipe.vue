@@ -232,7 +232,10 @@ function stop() {
   try {
     stream?.getTracks().forEach(t => t.stop())
   }
-  catch {}
+  // eslint-disable-next-line no-empty
+  catch {
+    // noop
+  }
 
   stream = undefined
 

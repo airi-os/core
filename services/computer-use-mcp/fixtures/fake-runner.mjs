@@ -81,6 +81,7 @@ rl.on('line', (line) => {
     exit(1)
   }
 
+  // eslint-disable-next-line default-case
   switch (request.method) {
     case 'initialize':
       writeResponse({

@@ -32,6 +32,7 @@ interface VitePressConfig extends ResolvedConfig {
   vitepress: SiteConfig
 }
 
+// eslint-disable-next-line consistent-return
 function recursivelyFindAtAssets(propertyMaybeObjectOrScalar: unknown, fn: (value: string) => string | undefined) {
   if (typeof propertyMaybeObjectOrScalar === 'string') {
     // eslint-disable-next-line regexp/no-unused-capturing-group
@@ -46,16 +47,18 @@ function recursivelyFindAtAssets(propertyMaybeObjectOrScalar: unknown, fn: (valu
       return modified
     }
 
+    // eslint-disable-next-line consistent-return
     return
   }
   if (Array.isArray(propertyMaybeObjectOrScalar)) {
     const array = propertyMaybeObjectOrScalar as unknown[]
-    for (let i = 0; i < array.length; i++) {
-      const value = array[i]
+    // eslint-disable-next-line no-restricted-syntax
+    for (const value of array) {
       recursivelyFindAtAssets(value, fn)
     }
 
     return
+  // eslint-disable-next-line consistent-return
   }
   if (typeof propertyMaybeObjectOrScalar === 'object') {
     const propertyObject = propertyMaybeObjectOrScalar as Record<string, unknown>
@@ -151,6 +154,7 @@ export function frontmatterAssets(): Plugin {
     },
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
+        // eslint-disable-next-line consistent-return
         const requesting = withoutBase(req.url, resolvedConfig?.base)
         if (!requesting || !mapAssetBuiltUrlAssetAbsoluteUrl.has(requesting)) {
           return next()

@@ -100,9 +100,8 @@ export function estimatePathTimeMs(path: MoveNode[]): number {
 
   let totalTimeS = 0
 
-  for (let i = 0; i < path.length; i++) {
-    const node = path[i]
-
+  // eslint-disable-next-line no-restricted-syntax
+  for (const node of path) {
     // Dig time: each block to break
     totalTimeS += node.toBreak.length * 1.5
 
@@ -172,7 +171,10 @@ export function patchedGoto(
           return goal.heuristic(bot.entity.position.floored())
         }
       }
-      catch {}
+      catch {
+        // noop
+      // eslint-disable-next-line no-empty
+      }
       return 0
     }
 
@@ -225,7 +227,10 @@ export function patchedGoto(
         try {
           bot.pathfinder.stop()
         }
-        catch {}
+        // eslint-disable-next-line no-empty
+        catch {
+          // noop
+        }
         settle(buildResult(false, 'timeout', `Navigation timed out after ${Math.round((Date.now() - startTime) / 1000)}s (ETA was ${Math.round(currentEstimatedMs / 1000)}s)`))
       }, currentTimeoutMs)
     }
@@ -311,9 +316,12 @@ export function patchedGoto(
       if (stagnantTicks >= MAX_STAGNANT_TICKS) {
         logger.withFields({ stagnantTicks, pos: vecToCoord(currentPos) }).log('Pathfinding stagnation detected')
         try {
+          // eslint-disable-next-line no-empty
           bot.pathfinder.stop()
         }
-        catch {}
+        catch {
+          // noop
+        }
         settle(buildResult(false, 'stagnation', `Bot stagnated for ${stagnantTicks * PROGRESS_INTERVAL_MS / 1000}s without meaningful movement`))
       }
     }

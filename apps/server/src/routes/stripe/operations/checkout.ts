@@ -123,6 +123,7 @@ export function createCheckoutOperation(deps: CheckoutOperationDeps) {
     })
 
     deps.metrics?.stripeCheckoutCreated.add(1)
+    // eslint-disable-next-line no-void
     void deps.productEventService?.track({
       userId: input.user.id,
       feature: 'billing',

@@ -64,7 +64,8 @@ class RuntimeEventTarget implements EventTarget {
 
 export function createRuntimeEventaContext() {
   const eventTarget = new RuntimeEventTarget((message) => {
-    void browser.runtime.sendMessage(message).catch(() => {})
+    // eslint-disable-next-line no-void
+    void browser.runtime.sendMessage(message).catch(() => { })
   })
 
   const { context, dispose } = createContext(eventTarget, {

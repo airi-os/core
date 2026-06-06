@@ -183,6 +183,7 @@ const EnvSchema = object({
 
 export type Env = InferOutput<typeof EnvSchema>
 
+// eslint-disable-next-line consistent-return
 export function parseEnv(inputEnv: Record<string, string> | typeof env): Env {
   try {
     return parse(EnvSchema, inputEnv)

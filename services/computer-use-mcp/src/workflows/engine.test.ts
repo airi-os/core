@@ -281,7 +281,9 @@ describe('workflow engine', () => {
     })
 
     expect(result.status).toBe('completed')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(result.stepResults[0]!.status).toBe('success')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(result.stepResults[1]!.status).toBe('success')
   })
 
@@ -306,6 +308,7 @@ describe('workflow engine', () => {
     })
 
     expect(result.status).toBe('failed')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(result.stepResults[0]!.status).toBe('failure')
   })
 
@@ -327,6 +330,7 @@ describe('workflow engine', () => {
     })
 
     expect(result.status).toBe('paused')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(result.stepResults[1]!.status).toBe('pending_approval')
   })
 
@@ -427,9 +431,13 @@ describe('workflow engine', () => {
     expect(result.status).toBe('reroute_required')
     expect(result.success).toBe(false)
     expect(result.rerouteAdvisory).toBeDefined()
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(result.rerouteAdvisory!.kind).toBe('use_browser_surface')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(result.rerouteAdvisory!.recommendedSurface).toBe('browser_dom')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(result.stepResults[0]!.status).toBe('reroute_required')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(result.stepResults[0]!.preparatoryResults).toEqual([
       expect.objectContaining({
         toolName: 'browser_dom_read_page',
@@ -557,6 +565,7 @@ describe('workflow engine', () => {
 
     expect(initial.status).toBe('paused')
     expect(initial.suspension).toBeDefined()
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(initial.suspension!.pausedDuring).toBe('action_prep')
     expect(executeAction).toHaveBeenCalledTimes(1)
 
@@ -567,6 +576,7 @@ describe('workflow engine', () => {
     })
 
     const resumed = await resumeWorkflow({
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       suspension: initial.suspension!,
       executeAction: vi.fn().mockResolvedValue(makeSuccessResult('main action done')),
       stateManager: sm,
@@ -576,6 +586,7 @@ describe('workflow engine', () => {
     expect(resumed.success).toBe(true)
     expect(resumed.status).toBe('completed')
     expect(resumed.stepResults).toHaveLength(1)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(resumed.stepResults[0]!.status).toBe('success')
   })
 
@@ -619,6 +630,7 @@ describe('workflow engine', () => {
 
     expect(result.status).toBe('failed')
     expect(result.success).toBe(false)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(result.stepResults[0]!.explanation).toContain('Preparatory action "focus_app" failed')
     expect(executeAction).toHaveBeenCalledTimes(1)
   })
@@ -797,6 +809,7 @@ describe('workflow engine', () => {
     expect(result.status).toBe('completed')
     expect(executePrepTool).toHaveBeenCalledWith('display_enumerate', { skipApprovalQueue: false })
     expect(executeAction).toHaveBeenCalledTimes(1)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(result.stepResults[0]!.preparatoryResults).toEqual([
       expect.objectContaining({
         toolName: 'display_enumerate',
@@ -844,8 +857,11 @@ describe('workflow engine', () => {
     expect(result.success).toBe(false)
     expect(result.status).toBe('failed')
     expect(result.task.phase).toBe('failed')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(result.stepResults[0]!.status).toBe('failure')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(result.stepResults[0]!.explanation).toContain('Preparatory tool "display_enumerate" failed')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(result.stepResults[0]!.preparatoryResults).toEqual([
       expect.objectContaining({
         toolName: 'display_enumerate',

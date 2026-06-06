@@ -146,7 +146,7 @@ export function createSpeechCatalogOperation(deps: V1RouteDeps): SpeechCatalogOp
     // operator who has wired the upstream but not yet curated models still
     // surfaces the provider rather than silently hiding it.
     return Response.json({
-      available: !!unspeech?.streaming?.baseURL,
+      available: Boolean(unspeech)?.streaming?.baseURL,
       models: models.map(m => ({
         id: m.id,
         name: m.name ?? m.id,

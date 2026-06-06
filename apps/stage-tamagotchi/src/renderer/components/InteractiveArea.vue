@@ -141,6 +141,7 @@ function handleMessageInputKeydown(event: KeyboardEvent) {
   const hasControl = event.ctrlKey || event.metaKey
   const hasShift = event.shiftKey
 
+  // eslint-disable-next-line default-case
   switch (sendMode.value) {
     case 'enter':
       if (!hasShift && !hasControl) {

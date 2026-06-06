@@ -39,7 +39,7 @@ export interface UserLink {
 }
 
 export function useTwitterUserServices(ctx: Context): TwitterService {
-  async function followUser(_username: string): Promise<boolean> {
+  function followUser(_username: string): Promise<boolean> {
     throw new Error('Not implemented')
   }
 

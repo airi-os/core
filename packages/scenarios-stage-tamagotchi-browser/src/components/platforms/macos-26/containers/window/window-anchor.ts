@@ -32,7 +32,9 @@ function toRelativeRect(rect: RectLike, platformRect: RectPosition): RelativeRec
   }
 }
 
+// eslint-disable-next-line consistent-return
 function resolveAnchorPoint(rect: RectLike, anchor: WindowAnchor) {
+  // eslint-disable-next-line default-case
   switch (anchor) {
     case 'top-left':
       return { x: rect.left, y: rect.top }
@@ -47,6 +49,7 @@ function resolveAnchorPoint(rect: RectLike, anchor: WindowAnchor) {
   }
 }
 
+// eslint-disable-next-line consistent-return
 export function createContainerAnchorStyle(
   anchor: WindowAnchor,
   boundsRect?: RelativeRect,
@@ -64,6 +67,7 @@ export function createContainerAnchorStyle(
     ? platformSize.height - (boundsRect.top + boundsRect.height)
     : 0
 
+  // eslint-disable-next-line default-case
   switch (anchor) {
     case 'top-left':
       return {

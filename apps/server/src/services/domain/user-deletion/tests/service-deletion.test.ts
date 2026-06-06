@@ -31,7 +31,7 @@ function fakeConfigKV() {
   return {
     get: vi.fn(async () => undefined),
     getOrThrow: vi.fn(async () => 0),
-    set: vi.fn(async () => {}),
+    set: vi.fn(async () => { }),
   } as any
 }
 

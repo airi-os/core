@@ -46,6 +46,7 @@ onMounted(() => {
 const mark = computedAsync(async () => {
   if (!resultsEl.value)
     return
+  // eslint-disable-next-line consistent-return
   return markRaw(new Mark(resultsEl.value))
 }, null)
 

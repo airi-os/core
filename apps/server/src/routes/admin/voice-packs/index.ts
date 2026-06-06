@@ -45,6 +45,7 @@ export function createAdminVoicePackRoutes(deps: {
         throw createBadRequestError('Invalid request body', 'INVALID_BODY', parseIssues(parsed.issues))
 
       const created = await deps.service.create(parsed.output)
+      // eslint-disable-next-line no-void
       void deps.productEventService.track({
         userId: user.id,
         feature: 'voice_pack',
@@ -75,6 +76,7 @@ export function createAdminVoicePackRoutes(deps: {
       if (!updated)
         throw createNotFoundError('Voice Pack not found')
 
+      // eslint-disable-next-line no-void
       void deps.productEventService.track({
         userId: user.id,
         feature: 'voice_pack',
@@ -98,6 +100,7 @@ export function createAdminVoicePackRoutes(deps: {
       if (!disabled)
         throw createNotFoundError('Voice Pack not found or already disabled')
 
+      // eslint-disable-next-line no-void
       void deps.productEventService.track({
         userId: user.id,
         feature: 'voice_pack',

@@ -300,6 +300,7 @@ export function createChatService(db: Database, metrics?: EngagementMetrics | nu
 
       if (result.totalCount > 0) {
         metrics?.chatMessages.add(result.totalCount)
+        // eslint-disable-next-line no-void
         void productEventService?.track({
           userId,
           feature: 'chat',

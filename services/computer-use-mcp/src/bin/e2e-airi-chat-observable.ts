@@ -207,7 +207,7 @@ async function terminateExistingStageTamagotchiInstances() {
   ]
 
   for (const pattern of patterns) {
-    await execFileAsync('pkill', ['-f', pattern]).catch(() => {})
+    await execFileAsync('pkill', ['-f', pattern]).catch(() => { })
   }
 
   await sleep(1_500)
@@ -372,7 +372,7 @@ async function listDebugTargets(browserWsUrl: string) {
       })
   }
   finally {
-    await browserClient.close().catch(() => {})
+    await browserClient.close().catch(() => { })
   }
 }
 
@@ -448,7 +448,7 @@ async function findTargetWithAiriDebugBridge(
         continue
       }
       finally {
-        await client?.close().catch(() => {})
+        await client?.close().catch(() => { })
       }
     }
 
@@ -993,10 +993,10 @@ async function main() {
   }
   finally {
     if (chatTargetClient && !chatClientSharesMainTarget) {
-      await chatTargetClient.close().catch(() => {})
+      await chatTargetClient.close().catch(() => { })
     }
-    await mainTargetClient?.close().catch(() => {})
-    await mcpClient?.close().catch(() => {})
+    await mainTargetClient?.close().catch(() => { })
+    await mcpClient?.close().catch(() => { })
 
     if (stageProcess && !stageProcess.killed) {
       stageProcess.kill('SIGINT')
@@ -1006,7 +1006,7 @@ async function main() {
       }
     }
 
-    await writeReport().catch(() => {})
+    await writeReport().catch(() => { })
   }
 }
 

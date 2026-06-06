@@ -22,7 +22,9 @@ describe('findNearestSafeStand', () => {
     const stand = findNearestSafeStand(poolBlockAt, { x: 0, y: 64, z: 0 }, 6)
     expect(stand).not.toBeNull()
     // an edge column (|x|==2 or |z|==2), standing at the bot's level on the stone lip
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(Math.abs(stand!.x) === 2 || Math.abs(stand!.z) === 2).toBe(true)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     expect(stand!.y).toBe(64)
   })
 
@@ -55,14 +57,14 @@ describe('escapeHazardBehavior re-entry guard', () => {
         position: new Vec3(0, 64, 0),
       },
       oxygenLevel: 20,
-      pathfinder: { stop() {} },
+      pathfinder: { stop() { } },
       blockAt: () => null,
-      lookAt: async () => {
+      lookAt: () => {
         state.lava = false // simulate the bot climbing out partway through the attempt
       },
-      setControlState: () => {},
+      setControlState: () => { },
     }
-    const api: any = { bot: { bot }, context: { updateAutonomy: () => {} } }
+    const api: any = { bot: { bot }, context: { updateAutonomy: () => { } } }
 
     // in a hazard -> reflex eligible
     expect(escapeHazardBehavior.when(undefined as any, api)).toBe(true)

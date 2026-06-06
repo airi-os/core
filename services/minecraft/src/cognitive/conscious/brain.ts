@@ -355,7 +355,7 @@ export class Brain {
     })
 
     // Action telemetry logger
-    this.onActionCompleted = async ({ action, result }: { action: ActionInstruction, result: unknown }) => {
+    this.onActionCompleted = ({ action, result }: { action: ActionInstruction, result: unknown }) => {
       this.deps.logger.log('INFO', `Brain: Action completed: ${action.tool}`)
       this.appendLlmLog({
         turnId: this.turnCounter,
@@ -399,7 +399,7 @@ export class Brain {
     }
     this.deps.taskExecutor.on('action:completed', this.onActionCompleted)
 
-    this.onActionFailed = async ({ action, error }: { action: ActionInstruction, error: Error }) => {
+    this.onActionFailed = ({ action, error }: { action: ActionInstruction, error: Error }) => {
       this.deps.logger.withError(error).warn(`Brain: Action failed: ${action.tool}`)
       this.appendLlmLog({
         turnId: this.turnCounter,
@@ -558,6 +558,7 @@ export class Brain {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private isAbortError(err: unknown): boolean {
     if (!err || typeof err !== 'object')
       return false
@@ -626,7 +627,7 @@ export class Brain {
           source: { type: 'system', id: 'debug-repl' },
           timestamp: Date.now(),
         }, snapshot as unknown as Record<string, unknown>),
-        async (action: ActionInstruction) => {
+        (action: ActionInstruction) => {
           const actionDef = actionDefs.get(action.tool)
           if (actionDef?.followControl === 'detach')
             this.deps.reflexManager.clearFollowTarget()
@@ -660,10 +661,12 @@ export class Brain {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private normalizeReplCode(code: string): string {
     return normalizeReplScript(code)
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private toDebugReplActions(actions: Array<{
     action: ActionInstruction
     ok: boolean
@@ -679,6 +682,7 @@ export class Brain {
     }))
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private cloneMessages(messages: Message[]): Message[] {
     return JSON.parse(JSON.stringify(messages)) as Message[]
   }
@@ -698,6 +702,7 @@ export class Brain {
   }
 
   // FIXME: Temporary fix to flatten structured message parts into a string for debug transport compatibility.
+  // eslint-disable-next-line class-methods-use-this
   private toDebugMessageContent(content: Message['content']): string {
     if (typeof content === 'string')
       return content
@@ -715,6 +720,7 @@ export class Brain {
   }
 
   // FIXME: Temporary fix to preserve reasoning in debug payload while message typing is inconsistent.
+  // eslint-disable-next-line class-methods-use-this
   private extractMessageReasoning(message: Message): string | undefined {
     const maybeReasoning = (message as Message & { reasoning?: unknown }).reasoning
     if (typeof maybeReasoning === 'string' && maybeReasoning.length > 0)
@@ -769,6 +775,7 @@ export class Brain {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private isPlayerChatEvent(event: BotEvent): boolean {
     if (event.type !== 'perception')
       return false
@@ -776,6 +783,7 @@ export class Brain {
     return signal.type === 'chat_message'
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private isAiriCommandEvent(event: BotEvent): boolean {
     if (event.type !== 'perception')
       return false
@@ -840,6 +848,7 @@ export class Brain {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private buildNoActionSignature(returnValue: string | undefined, logs: string[]): string {
     const returnPart = truncateForPrompt(returnValue ?? 'undefined', 320)
     const logsPart = logs.slice(-3).map(line => truncateForPrompt(line, 140)).join('|')
@@ -862,6 +871,7 @@ export class Brain {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private isErrorLlmLogEntry(entry: LlmLogEntry): boolean {
     if (entry.kind === 'repl_error')
       return true
@@ -879,6 +889,7 @@ export class Brain {
     return false
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private describeErrorLlmLogEntry(entry: LlmLogEntry): string {
     return `${entry.kind}: ${truncateForPrompt(entry.text, 140)}`
   }
@@ -977,6 +988,7 @@ export class Brain {
     if (event.source.type === 'system' && event.source.id === ERROR_BURST_GUARD_SOURCE_ID)
       return
 
+    // eslint-disable-next-line no-void
     void this.enqueueEvent(bot, {
       type: 'system_alert',
       payload: {
@@ -1077,6 +1089,7 @@ export class Brain {
     this.actionQueueUpdatedAt = Date.now()
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private cloneActionParams(params: Record<string, unknown>): Record<string, unknown> {
     return JSON.parse(JSON.stringify(params)) as Record<string, unknown>
   }
@@ -1134,6 +1147,7 @@ export class Brain {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private isQueueConsumingControlAction(action: ActionInstruction, actionDef: Action | undefined): boolean {
     if (action.tool === 'chat' || action.tool === 'skip' || action.tool === 'stop')
       return false
@@ -1216,6 +1230,7 @@ export class Brain {
 
     this.isActionWorkerRunning = true
     setImmediate(() => {
+      // eslint-disable-next-line no-void
       void this.runControlActionWorker(bot)
     })
   }
@@ -1223,6 +1238,7 @@ export class Brain {
   private async runControlActionWorker(bot: MineflayerWithAgents): Promise<void> {
     try {
       while (this.pendingControlActions.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const entry = this.pendingControlActions.shift()!
         entry.state = 'executing'
         entry.startedAt = Date.now()
@@ -1437,6 +1453,7 @@ export class Brain {
     })
 
     const result = await this.deps.taskExecutor.executeActionWithResult({ tool: 'stop', params: {} })
+    // eslint-disable-next-line no-void
     void this.enqueueEvent(bot, {
       type: 'feedback',
       payload: {
@@ -1520,6 +1537,7 @@ export class Brain {
         timestamp: Date.now(),
       }
 
+      // eslint-disable-next-line no-void
       void this.enqueueEvent(bot, followupEvent).catch(err =>
         this.deps.logger.withError(err).error('Brain: Failed to enqueue no-action budget alert'),
       )
@@ -1558,6 +1576,7 @@ export class Brain {
       },
     })
     this.debugService.log('DEBUG', 'Scheduling budgeted no-action follow-up turn')
+    // eslint-disable-next-line no-void
     void this.enqueueEvent(bot, followupEvent).catch(err =>
       this.deps.logger.withError(err).error('Brain: Failed to enqueue no-action follow-up'),
     )
@@ -1666,6 +1685,7 @@ export class Brain {
     let candidatePriority = Number.NEGATIVE_INFINITY
 
     for (let index = 0; index < this.queue.length; index++) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const item = this.queue[index]!
       if (!filter(item))
         continue
@@ -1708,6 +1728,7 @@ export class Brain {
     }
 
     if (!item)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       item = this.queue.shift()!
 
     if (getEventPriority(item.event) <= EVENT_PRIORITY_PERCEPTION)
@@ -2083,7 +2104,7 @@ export class Brain {
         codeToEvaluate,
         this.deps.taskExecutor.getAvailableActions(),
         this.createRuntimeGlobals(event, snapshot as unknown as Record<string, unknown>, bot),
-        async (action: ActionInstruction) => {
+        (action: ActionInstruction) => {
           const actionDef = actionDefs.get(action.tool)
           if (action.tool === 'stop') {
             return this.executeStopAction(bot, turnId)
@@ -2207,6 +2228,7 @@ export class Brain {
         durationMs: 0,
         timestamp: Date.now(),
       })
+      // eslint-disable-next-line no-void
       void this.enqueueEvent(bot, {
         type: 'feedback',
         payload: { status: 'failure', error: augmentedError },

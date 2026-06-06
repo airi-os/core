@@ -466,7 +466,7 @@ export async function runDesktopV3Smoke(): Promise<Record<string, unknown>> {
     }
   }
   finally {
-    await client.close().catch(() => {})
+    await client.close().catch(() => { })
   }
 }
 

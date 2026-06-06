@@ -379,7 +379,9 @@ async function handleChatSendMessage() {
             parser.consume(chunk.text)
           }
         }
+        // eslint-disable-next-line no-empty
         catch {
+          // noop
         }
       }
     }

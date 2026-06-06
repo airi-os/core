@@ -33,7 +33,7 @@ export class McData {
     return this.registry.blocks[blockId]?.name ?? ''
   }
 
-  getAllItems(ignore: string[] = []): any[] {
+  getAllItems(ignore: string[] = []): unknown[] {
     return Object.values(this.registry.items).filter(item => !ignore.includes(item.name))
   }
 
@@ -41,7 +41,7 @@ export class McData {
     return this.getAllItems(ignore).map(item => item.id)
   }
 
-  getAllBlocks(ignore: string[] = []): any[] {
+  getAllBlocks(ignore: string[] = []): unknown[] {
     return Object.values(this.registry.blocks).filter(block => !ignore.includes(block.name))
   }
 
@@ -87,12 +87,12 @@ export class McData {
       let ingredients: number[] = []
 
       if (isShapelessRecipe(r)) {
-        ingredients = r.ingredients.map((ing: any) => ing.id)
+        ingredients = r.ingredients.map((ing: unknown) => ing.id)
       }
       else if (isShapedRecipe(r)) {
         ingredients = r.inShape
           .flat()
-          .map((ing: any) => ing?.id)
+          .map((ing: unknown) => ing?.id)
           .filter(Boolean)
       }
 
@@ -216,11 +216,11 @@ function levenshteinDistance(a: string, b: string): number {
 }
 
 // Type guards
-function isShapelessRecipe(recipe: any): recipe is ShapelessRecipe {
+function isShapelessRecipe(recipe: unknown): recipe is ShapelessRecipe {
   return 'ingredients' in recipe
 }
 
-function isShapedRecipe(recipe: any): recipe is ShapedRecipe {
+function isShapedRecipe(recipe: unknown): recipe is ShapedRecipe {
   return 'inShape' in recipe
 }
 

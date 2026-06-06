@@ -11,7 +11,7 @@ export async function listJoinedChats() {
     .limit(20)
 }
 
-export async function recordJoinedChat(chatId: string, chatName: string) {
+export function recordJoinedChat(chatId: string, chatName: string) {
   return useDrizzle()
     .insert(joinedChatsTable)
     .values({

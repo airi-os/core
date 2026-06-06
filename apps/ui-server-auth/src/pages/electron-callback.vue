@@ -127,6 +127,7 @@ async function runRelayFlow() {
 }
 
 onMounted(() => {
+  // eslint-disable-next-line no-void
   void runRelayFlow()
 })
 </script>

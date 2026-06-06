@@ -123,7 +123,7 @@ describe('desktop_click_target preconditions via RunStateManager', () => {
   it('rejects when no snapshot is available', () => {
     const sm = new RunStateManager()
     const state = sm.getState()
-    expect(!!state.lastGroundingSnapshot).toBe(false)
+    expect(Boolean(state.lastGroundingSnapshot)).toBe(false)
   })
 
   it('rejects duplicate click on same candidate', () => {

@@ -65,13 +65,18 @@ export async function imagineAnAction(
 
     try {
       const res = await tracer.startActiveSpan('llm.chat.generate_text', async (s) => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         s.setAttribute('llm.chat.model', env.LLM_MODEL!)
         s.setAttribute('llm.chat.messages', JSON.stringify(requestMessages))
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         s.setAttribute('llm.provider.api_base_url', env.LLM_API_BASE_URL!)
 
         const req = {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           apiKey: env.LLM_API_KEY!,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           baseURL: env.LLM_API_BASE_URL!,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           model: env.LLM_MODEL!,
           messages: requestMessages,
           abortSignal: currentAbortController?.signal,

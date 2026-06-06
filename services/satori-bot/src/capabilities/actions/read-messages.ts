@@ -29,6 +29,7 @@ export const readMessagesAction: ActionHandler = {
     const unreadEventsForThisChannel = botContext.unreadEvents[channelId]
 
     if (!unreadEventsForThisChannel || unreadEventsForThisChannel.length === 0) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete botContext.unreadEvents[channelId]
       return {
         success: true,
@@ -52,6 +53,7 @@ export const readMessagesAction: ActionHandler = {
       .filter(item => !readEventIds.includes(item.id))
 
     if (botContext.unreadEvents[channelId].length === 0) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete botContext.unreadEvents[channelId]
     }
 

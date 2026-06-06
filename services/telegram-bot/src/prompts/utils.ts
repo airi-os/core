@@ -5,11 +5,10 @@ export function vif(condition: boolean, a: string, b = '') {
 }
 
 export function vChoice(...args: [boolean | (() => boolean), string][]) {
-  for (let i = 0; i < args.length; i++) {
-    const exp = args[i][0]
-
+  // eslint-disable-next-line no-restricted-syntax
+  for (const [exp, result] of args) {
     if (typeof exp === 'function' ? exp() : exp) {
-      return args[i][1]
+      return result
     }
   }
 

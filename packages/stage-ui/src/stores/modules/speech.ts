@@ -249,7 +249,7 @@ export const useSpeechStore = defineStore('speech', () => {
     if (activeSpeechProvider.value !== OFFICIAL_SPEECH_STREAMING_PROVIDER_ID)
       return
     const streamingModels = providersStore.getModelsForProvider(OFFICIAL_SPEECH_STREAMING_PROVIDER_ID)
-    const hasValidSelection = !!activeSpeechModel.value && streamingModels.some(m => m.id === activeSpeechModel.value)
+    const hasValidSelection = Boolean(activeSpeechModel.value) && streamingModels.some(m => m.id === activeSpeechModel.value)
     if (hasValidSelection)
       return
     // Replace an empty/stale (non-streaming) selection with the server default.
@@ -275,7 +275,7 @@ export const useSpeechStore = defineStore('speech', () => {
     if (!models.length)
       return
 
-    const hasValidSelection = !!activeSpeechModel.value && models.some(m => m.id === activeSpeechModel.value)
+    const hasValidSelection = Boolean(activeSpeechModel.value) && models.some(m => m.id === activeSpeechModel.value)
     if (hasValidSelection)
       return
 
@@ -534,14 +534,14 @@ export const useSpeechStore = defineStore('speech', () => {
     if (!activeSpeechProvider.value)
       return false
 
-    let hasModel = !!activeSpeechModel.value
-    let hasVoice = !!activeSpeechVoiceId.value
+    let hasModel = Boolean(activeSpeechModel.value)
+    let hasVoice = Boolean(activeSpeechVoiceId.value)
 
     // For OpenAI Compatible providers, check provider config as fallback
     if (activeSpeechProvider.value === 'openai-compatible-audio-speech') {
       const providerConfig = providersStore.getProviderConfig(activeSpeechProvider.value)
-      hasModel ||= !!providerConfig?.model
-      hasVoice ||= !!providerConfig?.voice
+      hasModel ||= Boolean(providerConfig)?.model
+      hasVoice ||= Boolean(providerConfig)?.voice
     }
 
     return hasModel && hasVoice

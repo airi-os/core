@@ -216,7 +216,7 @@ async function terminateExistingStageTamagotchiInstances() {
   ]
 
   for (const pattern of patterns) {
-    await execFileAsync('pkill', ['-f', pattern]).catch(() => {})
+    await execFileAsync('pkill', ['-f', pattern]).catch(() => { })
   }
 
   await sleep(1_500)
@@ -229,7 +229,7 @@ async function terminateExistingDiscordBotInstances() {
   ]
 
   for (const pattern of patterns) {
-    await execFileAsync('pkill', ['-f', pattern]).catch(() => {})
+    await execFileAsync('pkill', ['-f', pattern]).catch(() => { })
   }
 
   await sleep(1_000)
@@ -438,7 +438,7 @@ async function listDebugTargets(browserWsUrl: string) {
       })
   }
   finally {
-    await browserClient.close().catch(() => {})
+    await browserClient.close().catch(() => { })
   }
 }
 
@@ -498,7 +498,7 @@ async function findTargetWithAiriDebugBridge(
         continue
       }
       finally {
-        await client?.close().catch(() => {})
+        await client?.close().catch(() => { })
       }
     }
 
@@ -1034,8 +1034,8 @@ async function main() {
     exitCode = 1
   }
   finally {
-    await mainTargetClient?.close().catch(() => {})
-    await mcpClient?.close().catch(() => {})
+    await mainTargetClient?.close().catch(() => { })
+    await mcpClient?.close().catch(() => { })
 
     if (discordBotProcess && !discordBotProcess.killed) {
       discordBotProcess.kill('SIGINT')
@@ -1053,7 +1053,7 @@ async function main() {
       }
     }
 
-    await writeReport().catch(() => {})
+    await writeReport().catch(() => { })
   }
 }
 

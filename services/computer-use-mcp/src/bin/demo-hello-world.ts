@@ -113,7 +113,7 @@ PYEOF`,
     console.info('\n🎉 Done! Python hello-world project created and executed via computer-use-mcp.')
   }
   finally {
-    await client.close().catch(() => {})
+    await client.close().catch(() => { })
   }
 }
 

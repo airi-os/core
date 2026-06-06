@@ -295,12 +295,12 @@ async function ensureMined(
   throw new ActionError('RESOURCE_MISSING', `Could not gather enough ${itemName}`, { required: requiredCount, current: count })
 }
 
-export async function ensureCobblestone(mineflayer: Mineflayer, requiredCobblestone: number, maxDistance: number = 4): Promise<boolean> {
+export function ensureCobblestone(mineflayer: Mineflayer, requiredCobblestone: number, maxDistance: number = 4): Promise<boolean> {
   logger.log('Bot: Checking for cobblestone...')
   return ensureMined(mineflayer, 'cobblestone', 'stone', requiredCobblestone, maxDistance, true)
 }
 
-export async function ensureCoal(mineflayer: Mineflayer, neededAmount: number, maxDistance: number = 4): Promise<boolean> {
+export function ensureCoal(mineflayer: Mineflayer, neededAmount: number, maxDistance: number = 4): Promise<boolean> {
   logger.log('Bot: Checking for coal...')
   return ensureMined(mineflayer, 'coal', 'coal_ore', neededAmount, maxDistance, false)
 }
@@ -397,7 +397,7 @@ async function ensureTool(mineflayer: Mineflayer, toolType: ToolType, quantity: 
 }
 
 // Helper function to check if the bot has enough materials to craft a tool of a specific material
-export async function hasResourcesForTool(
+export function hasResourcesForTool(
   mineflayer: Mineflayer,
   material: MaterialType,
   num = 3,

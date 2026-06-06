@@ -56,7 +56,7 @@ const posts = computed(() => {
 
       return overridePost
     })
-    .filter(post => !!post.title)
+    .filter(post => Boolean(post.title))
 
   const currentLanguagePostsData = transformedPostsData.filter(post => post.lang === lang.value)
 

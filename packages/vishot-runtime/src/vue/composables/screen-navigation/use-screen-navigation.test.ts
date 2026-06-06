@@ -15,7 +15,7 @@ describe('useSceneNavigation', () => {
     const nav = useSceneNavigation({
       scenes,
       currentSceneId,
-      onNavigate: () => {},
+      onNavigate: () => { },
     })
 
     expect(nav.activeScene.value?.id).toBe('intro-websocket')
@@ -30,7 +30,7 @@ describe('useSceneNavigation', () => {
     const nav = useSceneNavigation({
       scenes,
       currentSceneId,
-      onNavigate: () => {},
+      onNavigate: () => { },
     })
 
     expect(nav.activeScene.value).toBeUndefined()
@@ -44,7 +44,7 @@ describe('useSceneNavigation', () => {
     const nav = useSceneNavigation({
       scenes,
       currentSceneId,
-      onNavigate: () => {},
+      onNavigate: () => { },
     })
 
     nav.searchQuery.value = 'intro'

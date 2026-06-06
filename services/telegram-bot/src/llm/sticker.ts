@@ -14,6 +14,7 @@ import { div, span } from '../prompts/utils'
 import { interpretAnimatedSticker } from './animated-sticker'
 import { toPngBase64 } from './image'
 
+// eslint-disable-next-line consistent-return
 export async function interpretSticker(bot: Bot, msg: Message, sticker: Sticker) {
   const logger = useLogg('interpretSticker').useGlobalConfig()
 
@@ -31,6 +32,7 @@ export async function interpretSticker(bot: Bot, msg: Message, sticker: Sticker)
   try {
     if (await findStickerDescription(sticker.file_id)) {
       logger.withField('sticker', sticker).log('Sticker already interpreted, skipping')
+      // eslint-disable-next-line consistent-return
       return
     }
 
@@ -40,8 +42,11 @@ export async function interpretSticker(bot: Bot, msg: Message, sticker: Sticker)
     const stickerBase64 = await toPngBase64(buffer)
 
     const req = {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       apiKey: env.LLM_VISION_API_KEY!,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       baseURL: env.LLM_VISION_API_BASE_URL!,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       model: env.LLM_VISION_MODEL!,
       messages: message.messages(
         message.system(div(
@@ -79,8 +84,11 @@ export async function interpretSticker(bot: Bot, msg: Message, sticker: Sticker)
 
     // TODO: implement this for sticker searching
     const _embedRes = await embed({
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       baseURL: env.EMBEDDING_API_BASE_URL!,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       apiKey: env.EMBEDDING_API_KEY!,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       model: env.EMBEDDING_MODEL!,
       input: 'Hello, world!',
     })

@@ -16,7 +16,7 @@ import { pickupNearbyItems } from './world-interactions'
 const logger = useLogger()
 
 function isMessagable(err: unknown): err is { message: string } {
-  return (err instanceof Error || (typeof err === 'object' && !!err && 'message' in err && typeof err.message === 'string'))
+  return (err instanceof Error || (typeof err === 'object' && Boolean(err) && 'message' in err && typeof err.message === 'string'))
 }
 
 export async function collectBlock(

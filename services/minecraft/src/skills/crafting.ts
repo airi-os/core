@@ -337,7 +337,7 @@ export async function smeltItem(mineflayer: Mineflayer, itemName: string, num = 
   }
 }
 
-export async function clearNearestFurnace(mineflayer: Mineflayer): Promise<boolean> {
+export function clearNearestFurnace(mineflayer: Mineflayer): Promise<boolean> {
   const furnaceBlock = getNearestBlock(mineflayer, 'furnace', 6)
   if (!furnaceBlock) {
     throw new ActionError('NAVIGATION_FAILED', 'No furnace nearby to clear')

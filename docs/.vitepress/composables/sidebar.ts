@@ -64,7 +64,7 @@ export function useSidebarControl(
   })
 
   const isLink = computed(() => {
-    return !!item.value.link
+    return Boolean(item.value.link)
   })
 
   const isActiveLink = ref(false)
@@ -124,7 +124,7 @@ const INDEX_OR_EXT_RE = /(?:(^|\/)index)?\.(?:md|html)$/
 export function isActive(
   currentPath: string,
   matchPath?: string,
-  asRegex: boolean = false,
+  asRegex = false,
 ): boolean {
   if (matchPath === undefined) {
     return false

@@ -30,15 +30,15 @@ export function useLogger() {
   // Proxy logger to broadcast events
   // We need to preserve the original formatting/behavior while adding the side-effect
   return {
-    log: (message: string, ...args: any[]) => {
+    log: (message: string, ...args: unknown[]) => {
       logger.log(message, ...args)
       DebugService.getInstance().log('INFO', `[${dirName}/${fileName}] ${message}`, { args })
     },
-    error: (message: string, ...args: any[]) => {
+    error: (message: string, ...args: unknown[]) => {
       logger.error(message, ...args)
       DebugService.getInstance().log('ERROR', `[${dirName}/${fileName}] ${message}`, { args })
     },
-    warn: (message: string, ...args: any[]) => {
+    warn: (message: string, ...args: unknown[]) => {
       logger.warn(message, ...args)
       DebugService.getInstance().log('WARN', `[${dirName}/${fileName}] ${message}`, { args })
     },

@@ -52,7 +52,7 @@ function bindCapViteShortcuts(
   onShutdown: () => Promise<void>,
 ) {
   if (!process.stdin.isTTY || typeof process.stdin.setRawMode !== 'function') {
-    return () => {}
+    return () => { }
   }
 
   process.stdin.resume()
@@ -79,6 +79,7 @@ function bindCapViteShortcuts(
 
   const onKeyPress = (input: string, key: readline.Key) => {
     if (key.ctrl && key.name === 'c') {
+      // eslint-disable-next-line no-void
       void shutdownFromShortcut()
       return
     }
@@ -186,6 +187,7 @@ export function capVitePlugin(options: CapVitePluginOptions): Plugin {
       }
 
       function handleShutdownRequest() {
+        // eslint-disable-next-line no-void
         void shutdown()
       }
 

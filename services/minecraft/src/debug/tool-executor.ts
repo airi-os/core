@@ -14,15 +14,18 @@ export class ToolExecutor {
   constructor(mineflayer: Mineflayer) {
     this.mineflayer = mineflayer
     this.debugService = DebugService.getInstance()
+    // eslint-disable-next-line no-console
     console.log('[ToolExecutor] Initializing ToolExecutor')
     this.setupHandlers()
   }
 
   private setupHandlers(): void {
+    // eslint-disable-next-line no-console
     console.log('[ToolExecutor] Key registered for request_tools')
 
     // Handle tool list request
     this.debugService.onCommand('request_tools', () => {
+      // eslint-disable-next-line no-console
       console.log('[ToolExecutor] Received request_tools command')
       this.sendToolsList()
     })
@@ -30,6 +33,7 @@ export class ToolExecutor {
     // Handle tool execution
     this.debugService.onCommand('execute_tool', (cmd) => {
       if (cmd.type === 'execute_tool') {
+        // eslint-disable-next-line no-console
         console.log(`[ToolExecutor] Executing tool: ${cmd.payload.toolName}`)
         this.executeTool(cmd.payload.toolName, cmd.payload.params)
       }
@@ -39,6 +43,7 @@ export class ToolExecutor {
   private sendToolsList(): void {
     try {
       const tools = this.extractToolDefinitions()
+      // eslint-disable-next-line no-console
       console.log(`[ToolExecutor] Sending ${tools.length} tools`)
       this.debugService.emit('debug:tools_list', { tools })
     }
@@ -65,7 +70,7 @@ export class ToolExecutor {
       // perform: (mineflayer) => async (args) => result
       const performer = action.perform(this.mineflayer)
 
-      const args: any[] = []
+      const args: unknown[] = []
       const shape = (action.schema as any).shape
       for (const key in shape) {
         if (Object.hasOwn(validated, key)) {
@@ -100,7 +105,7 @@ export class ToolExecutor {
     }))
   }
 
-  private extractParamsFromSchema(schema: ZodObject<any>): ToolParameter[] {
+  private extractParamsFromSchema(schema: ZodObject<unknown>): ToolParameter[] {
     if (!schema || !schema.shape)
       return []
 
@@ -108,7 +113,7 @@ export class ToolExecutor {
     const params: ToolParameter[] = []
 
     for (const [name, zodType] of Object.entries(shape)) {
-      const def = this.getZodDef(zodType as ZodType<any>)
+      const def = this.getZodDef(zodType as ZodType<unknown>)
 
       params.push({
         name,
@@ -124,17 +129,18 @@ export class ToolExecutor {
   }
 
   // Helper to extract metadata from Zod types
-  private getZodDef(zodType: ZodType<any>): { typeName: 'string' | 'number' | 'boolean', description?: string, min?: number, max?: number, defaultValue?: any } {
+  // eslint-disable-next-line class-methods-use-this
+  private getZodDef(zodType: ZodType<unknown>): { typeName: 'string' | 'number' | 'boolean', description?: string, min?: number, max?: number, defaultValue?: unknown } {
     let typeName: 'string' | 'number' | 'boolean' = 'string'
     let curr: any = zodType
     const description = curr.description
 
     let min: number | undefined
     let max: number | undefined
-    let defaultValue: any
+    let defaultValue: unknown
 
     // Helper to get type identifier
-    const getTypeId = (t: any) => t.constructor.name || t._def?.typeName
+    const getTypeId = (t: unknown) => t.constructor.name || t._def?.typeName
 
     // Unwrap effects/optional/nullable/default to get inner type
     let infiniteLoopGuard = 0

@@ -14,7 +14,7 @@ const mocks = vi.hoisted(() => ({
 vi.mock('@modelcontextprotocol/sdk/server/mcp.js', () => {
   return {
     McpServer: class MockMcpServer {
-      constructor(config: any) {
+      constructor(config: unknown) {
         mocks.McpServerConstructor(config)
         return {
           resource: mocks.resource,
@@ -74,6 +74,7 @@ describe('mcpReplServer', () => {
       }]),
     } as unknown as Brain
 
+    // eslint-disable-next-line no-void
     void new McpReplServer(brain)
   })
 
@@ -98,6 +99,7 @@ describe('mcpReplServer', () => {
 
   it('executes repl via tool handler', async () => {
     const executeReplCall = mocks.tool.mock.calls.find(call => call[0] === 'execute_repl')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const handler = executeReplCall![2]
 
     const result = await handler({ code: 'test code' })
@@ -108,6 +110,7 @@ describe('mcpReplServer', () => {
 
   it('injects chat via tool handler', async () => {
     const injectChatCall = mocks.tool.mock.calls.find(call => call[0] === 'inject_chat')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const handler = injectChatCall![2]
 
     await handler({ username: 'steve', message: 'hi' })
@@ -122,6 +125,7 @@ describe('mcpReplServer', () => {
   })
 
   it('injects validated events via tool handler', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const injectEventCall = mocks.tool.mock.calls.find(call => call[0] === 'inject_event')!
     const handler = injectEventCall[2]
 
@@ -161,6 +165,7 @@ describe('mcpReplServer', () => {
   })
 
   it('rejects invalid inject_event payloads', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const injectEventCall = mocks.tool.mock.calls.find(call => call[0] === 'inject_event')!
     const handler = injectEventCall[2]
 
@@ -182,6 +187,7 @@ describe('mcpReplServer', () => {
 
   it('gets repl state via tool handler (skips builtins by default)', async () => {
     const toolCall = mocks.tool.mock.calls.find(call => call[0] === 'get_state')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const handler = toolCall![2]
 
     await handler({})
@@ -191,6 +197,7 @@ describe('mcpReplServer', () => {
 
   it('gets repl state via tool handler (can include builtins)', async () => {
     const toolCall = mocks.tool.mock.calls.find(call => call[0] === 'get_state')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const handler = toolCall![2]
 
     await handler({ includeBuiltins: true })
@@ -200,6 +207,7 @@ describe('mcpReplServer', () => {
 
   it('reads brain state via resource handler', async () => {
     const resourceCall = mocks.resource.mock.calls.find(call => call[0] === 'brain-state')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const handler = resourceCall![2]
 
     const result = await handler({ href: 'brain://state' })
@@ -210,6 +218,7 @@ describe('mcpReplServer', () => {
 
   it('gets last prompt via tool handler', async () => {
     const toolCall = mocks.tool.mock.calls.find(call => call[0] === 'get_last_prompt')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const handler = toolCall![2]
 
     const result = await handler({})
@@ -223,6 +232,7 @@ describe('mcpReplServer', () => {
 
   it('gets logs via tool handler', async () => {
     const toolCall = mocks.tool.mock.calls.find(call => call[0] === 'get_logs')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const handler = toolCall![2]
 
     const result = await handler({ limit: 10 })
@@ -233,6 +243,7 @@ describe('mcpReplServer', () => {
 
   it('gets llm trace via tool handler', async () => {
     const toolCall = mocks.tool.mock.calls.find(call => call[0] === 'get_llm_trace')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const handler = toolCall![2]
 
     const result = await handler({ limit: 5, turnId: 3 })

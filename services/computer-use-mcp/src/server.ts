@@ -68,16 +68,18 @@ export async function startComputerUseMcpServer(config = resolveComputerUseConfi
 
   const shutdown = async () => {
     destroyAllPtySessions()
-    await cdpCleanup.close().catch(() => {})
-    await runtime.cdpBridgeManager.close().catch(() => {})
-    await runtime.browserDomBridge.close().catch(() => {})
-    await runtime.executor.close?.().catch(() => {})
+    await cdpCleanup.close().catch(() => { })
+    await runtime.cdpBridgeManager.close().catch(() => { })
+    await runtime.browserDomBridge.close().catch(() => { })
+    await runtime.executor.close?.().catch(() => { })
   }
 
   process.once('SIGINT', () => {
+    // eslint-disable-next-line no-void
     void shutdown()
   })
   process.once('SIGTERM', () => {
+    // eslint-disable-next-line no-void
     void shutdown()
   })
 

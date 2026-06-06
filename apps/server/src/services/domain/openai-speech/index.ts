@@ -110,6 +110,7 @@ export function createOpenAiSpeechService(deps: OpenAiSpeechServiceDeps) {
       voice: typeof input.body.voice === 'string' ? input.body.voice : undefined,
     }).log('tts speech request')
 
+    // eslint-disable-next-line no-void
     void deps.productEventService.track({
       userId: input.userId,
       feature: 'tts',
@@ -131,6 +132,7 @@ export function createOpenAiSpeechService(deps: OpenAiSpeechServiceDeps) {
       if (!(err instanceof ApiError) || err.statusCode !== 402)
         throw err
 
+      // eslint-disable-next-line no-void
       void deps.productEventService.track({
         userId: input.userId,
         feature: 'tts',
@@ -206,6 +208,7 @@ export function createOpenAiSpeechService(deps: OpenAiSpeechServiceDeps) {
         provider: routeCtx.provider,
         status: failure.status,
       })
+      // eslint-disable-next-line no-void
       void deps.productEventService.track({
         userId: input.userId,
         feature: 'tts',
@@ -232,6 +235,7 @@ export function createOpenAiSpeechService(deps: OpenAiSpeechServiceDeps) {
       span.end()
       generationTrace.fail(`Gateway ${response.status}`)
       recordMetrics({ model: requestModel, status: response.status, provider: routeCtx.provider, durationMs, fluxConsumed: 0 })
+      // eslint-disable-next-line no-void
       void deps.productEventService.track({
         userId: input.userId,
         feature: 'tts',
@@ -281,6 +285,7 @@ export function createOpenAiSpeechService(deps: OpenAiSpeechServiceDeps) {
     }
 
     recordMetrics({ model: requestModel, status: response.status, provider: routeCtx.provider, durationMs, fluxConsumed })
+    // eslint-disable-next-line no-void
     void deps.productEventService.track({
       userId: input.userId,
       feature: 'tts',

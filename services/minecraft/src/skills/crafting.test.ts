@@ -99,7 +99,7 @@ describe('crafting smeltItem', () => {
           items: vi.fn(() => []),
         },
         lookAt: vi.fn(),
-        openFurnace: vi.fn(async () => furnace),
+        openFurnace: vi.fn(() => furnace),
       },
     } as any
 

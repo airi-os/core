@@ -42,8 +42,8 @@
       href: el.href || '',
       placeholder: el.placeholder || '',
       role: el.getAttribute('role') || '',
-      disabled: !!el.disabled,
-      checked: !!el.checked,
+      disabled: Boolean(el.disabled),
+      checked: Boolean(el.checked),
       visible: r.width > 0 && r.height > 0,
       rect: { x: Math.round(r.left), y: Math.round(r.top), w: Math.round(r.width), h: Math.round(r.height) },
     }
@@ -273,7 +273,7 @@
         }
 
         if (tag === 'input' && (type === 'checkbox' || type === 'radio')) {
-          result.checked = !!el.checked
+          result.checked = Boolean(el.checked)
         }
 
         if (tag === 'select') {
@@ -349,6 +349,7 @@
 
     const { reqId, method, args } = data
     const fn = __AIRI_DG__[method]
+    // eslint-disable-next-line no-undef-init -- Intentionally uninitialized, assigned in try block
     let result
 
     if (typeof fn === 'function') {

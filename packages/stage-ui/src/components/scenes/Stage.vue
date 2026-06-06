@@ -283,6 +283,7 @@ async function playFunction(item: Parameters<Parameters<typeof createPlaybackMan
   if (lipSyncNode.value)
     source.connect(lipSyncNode.value)
 
+  // eslint-disable-next-line consistent-return
   return new Promise<void>((resolve) => {
     let settled = false
     const resolveOnce = () => {
@@ -297,7 +298,10 @@ async function playFunction(item: Parameters<Parameters<typeof createPlaybackMan
         source.stop()
         source.disconnect()
       }
-      catch {}
+      // eslint-disable-next-line no-empty
+      catch {
+        // noop
+      }
       if (currentAudioSource.value === source)
         currentAudioSource.value = undefined
       resolveOnce()
@@ -497,10 +501,12 @@ const speechPipeline = createSpeechPipeline<AudioBuffer>({
 })
 
 initIOTracer()
+// eslint-disable-next-line no-void
 useIOTraceBridge(speechPipeline)
 useSpeechPipelineAnalytics()
 void speechRuntimeStore.registerHost(speechPipeline)
 
+// eslint-disable-next-line no-void
 speechPipeline.on('onSpecial', (segment) => {
   if (segment.special) {
     void playSpecialToken(segment.special, {
@@ -574,10 +580,11 @@ function resetLive2dLipSync() {
   stopLipSyncLoop()
 
   try {
+    // eslint-disable-next-line no-empty
     lipSyncNode.value?.disconnect()
   }
   catch {
-
+    // noop
   }
 
   lipSyncNode.value = undefined
@@ -828,6 +835,7 @@ watch([stageModelRenderer, () => props.paused], ([renderer]) => {
   }
 
   syncLipSyncLoop()
+// eslint-disable-next-line consistent-return
 }, { immediate: true })
 
 function canvasElement() {
