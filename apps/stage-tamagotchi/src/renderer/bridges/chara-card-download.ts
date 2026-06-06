@@ -1,5 +1,5 @@
 import { getElectronEventaContext } from '@proj-airi/electron-vueuse'
-import { charaCardDownloaded } from '../../../shared/eventa'
+import { charaCardDownloaded } from '../../shared/eventa'
 import { useCharaCardHandler } from '../composables/useCharaCardHandler'
 import { toast } from 'vue-sonner'
 
